@@ -21,7 +21,14 @@ export function SiteSearch({
           className="field font-normal"
           type="search"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            const next = event.target.value;
+            setQuery(next);
+            const url = new URL(window.location.href);
+            if (next.trim()) url.searchParams.set("q", next);
+            else url.searchParams.delete("q");
+            window.history.replaceState(null, "", url);
+          }}
           placeholder="Try ‘PDF’ or ‘word counter’"
         />
       </label>

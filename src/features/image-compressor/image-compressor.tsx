@@ -2,14 +2,14 @@
 import { useEffect, useState } from "react";
 import { FileUploader } from "@/components/tools/file-uploader";
 import { ToolResult } from "@/components/tools/tool-result";
-import { compressImage } from "./compress";
+import { compressImage, type CompressedImage } from "./compress";
 import { validateImageFile } from "./validate";
 export function ImageCompressor() {
   const [file, setFile] = useState<File>(),
     [quality, setQuality] = useState(0.78),
     [message, setMessage] = useState(""),
     [url, setUrl] = useState(""),
-    [output, setOutput] = useState(0);
+    [output, setOutput] = useState<CompressedImage>();
   useEffect(
     () => () => {
       if (url) URL.revokeObjectURL(url);
@@ -28,7 +28,7 @@ export function ImageCompressor() {
       const result = await compressImage(file, quality);
       if (url) URL.revokeObjectURL(url);
       setUrl(URL.createObjectURL(result.blob));
-      setOutput(result.outputSize);
+      setOutput(result);
       setMessage(
         result.outputSize < file.size
           ? "Your compressed image is ready."
@@ -65,12 +65,26 @@ export function ImageCompressor() {
       {message && (
         <ToolResult>
           <p>{message}</p>
-          {url && (
+          {url && output && (
             <>
               <p className="text-muted mt-2 text-sm">
-                Output: {(output / 1024).toFixed(1)} KB
+                Original: {(output.originalSize / 1024).toFixed(1)} KB · Output:{" "}
+                {(output.outputSize / 1024).toFixed(1)} KB · {output.width} ×{" "}
+                {output.height} ·{" "}
+                {output.mime.replace("image/", "").toUpperCase()} ·{" "}
+                {Math.max(
+                  0,
+                  Math.round(
+                    (1 - output.outputSize / output.originalSize) * 100,
+                  ),
+                )}
+                % smaller
               </p>
-              <a className="button mt-3" download="compressed-image" href={url}>
+              <a
+                className="button mt-3"
+                download={`compressed-image.${output.mime.split("/")[1]}`}
+                href={url}
+              >
                 Download image
               </a>
             </>

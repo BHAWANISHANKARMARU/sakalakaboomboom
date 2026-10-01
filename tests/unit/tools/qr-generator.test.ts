@@ -7,4 +7,7 @@ describe("QR generator", () => {
   });
   it("accepts ordinary text without treating markup as HTML", () =>
     expect(validateQrInput("<script>alert(1)</script>").ok).toBe(true));
+  it("rejects content that exceeds high error-correction capacity", () => {
+    expect(validateQrInput("x".repeat(1500), "H").ok).toBe(false);
+  });
 });

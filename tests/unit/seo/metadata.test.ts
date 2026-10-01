@@ -10,4 +10,9 @@ describe("metadata", () => {
     expect(value.alternates?.canonical).toBe("https://sahaj.tools/tools");
     expect(value.title).toBe("Online tools | Sahaj Tools");
   });
+  it("gives the root page a canonical and Open Graph URL", async () => {
+    const { metadata } = await import("@/app/layout");
+    expect(metadata.alternates?.canonical).toBe("./");
+    expect(metadata.openGraph).toMatchObject({ url: "./" });
+  });
 });

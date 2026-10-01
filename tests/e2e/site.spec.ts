@@ -54,3 +54,10 @@ test("word counter and JSON formatter work", async ({ page }) => {
   await page.getByRole("button", { name: "Format & validate" }).click();
   await expect(page.getByLabel("Result")).toContainText('"ok": true');
 });
+test("homepage search opens shareable results", async ({ page }) => {
+  await page.goto("/");
+  await page.getByLabel("Search tools and guides").fill("word counter");
+  await page.getByRole("button", { name: "Search" }).click();
+  await expect(page).toHaveURL(/\/search\?q=word\+counter$/);
+  await expect(page.getByRole("link", { name: /Word Counter/ })).toBeVisible();
+});

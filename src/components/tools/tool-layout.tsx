@@ -1,21 +1,38 @@
 import type { ReactNode } from "react";
 import { PageContainer } from "@/components/layout/page-container";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { breadcrumbJsonLd, toolJsonLd } from "@/lib/seo/structured-data";
 export function ToolLayout({
   title,
   description,
   category,
+  path,
   children,
   details,
 }: {
   title: string;
   description: string;
   category: string;
+  path: string;
   children: ReactNode;
   details?: ReactNode;
 }) {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            breadcrumbJsonLd([
+              { name: "Home", path: "/" },
+              { name: "Tools", path: "/tools" },
+              { name: category, path: `/tools/${category.toLowerCase()}` },
+              { name: title, path },
+            ]),
+            toolJsonLd(title, description, path),
+          ]).replace(/</g, "\\u003c"),
+        }}
+      />
       <PageContainer className="grid gap-8 py-8 sm:py-12">
         <Breadcrumbs
           items={[

@@ -5,7 +5,18 @@ export async function validateImageFile(file: File): Promise<ImageValidation> {
   if (file.size > 20 * 1024 * 1024)
     return { ok: false, message: "Choose an image that is 20 MB or smaller." };
   const detected = imageSignature(await readSignature(file));
-  if (!detected || detected !== file.type)
+  const expectedExtension = {
+    "image/jpeg": [".jpg", ".jpeg"],
+    "image/png": [".png"],
+    "image/webp": [".webp"],
+  } as const;
+  if (
+    !detected ||
+    detected !== file.type ||
+    !expectedExtension[detected].some((extension) =>
+      file.name.toLowerCase().endsWith(extension),
+    )
+  )
     return {
       ok: false,
       message: "This file is not a supported JPEG, PNG or WebP image.",

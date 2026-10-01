@@ -14,6 +14,7 @@ export default function Page() {
       title="Image Compressor"
       description="Reduce an image file size without uploading it."
       category="Image"
+      path="/tools/image/image-compressor"
     >
       <ImageCompressor />
       <RelatedTools toolId="image-compressor" />

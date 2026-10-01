@@ -14,6 +14,7 @@ export default function Page() {
       title="PDF Merger"
       description="Combine multiple PDFs in the order you choose. Nothing is uploaded."
       category="PDF"
+      path="/tools/pdf/pdf-merger"
     >
       <PdfMerger />
       <RelatedTools toolId="pdf-merger" />

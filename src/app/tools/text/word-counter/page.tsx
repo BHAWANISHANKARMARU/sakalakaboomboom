@@ -14,6 +14,7 @@ export default function Page() {
       title="Word Counter"
       description="Count words, characters, sentences and reading time as you type."
       category="Text"
+      path="/tools/text/word-counter"
     >
       <WordCounter />
       <RelatedTools toolId="word-counter" />

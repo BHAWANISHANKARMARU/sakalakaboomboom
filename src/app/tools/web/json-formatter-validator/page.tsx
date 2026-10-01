@@ -14,6 +14,7 @@ export default function Page() {
       title="JSON Formatter & Validator"
       description="Format, minify and check JSON without sending it anywhere."
       category="Web"
+      path="/tools/web/json-formatter-validator"
     >
       <JsonFormatter />
       <RelatedTools toolId="json-formatter" />

@@ -9,7 +9,12 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/search",
   noIndex: true,
 });
-export default function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q = "" } = await searchParams;
   return (
     <main>
       <PageContainer className="grid max-w-3xl gap-8 py-12">
@@ -19,7 +24,10 @@ export default function Page() {
             Find a practical tool or a reviewed guide.
           </p>
         </header>
-        <SiteSearch records={buildSearchIndex()} />
+        <SiteSearch
+          records={buildSearchIndex()}
+          initialQuery={q.slice(0, 200)}
+        />
       </PageContainer>
     </main>
   );

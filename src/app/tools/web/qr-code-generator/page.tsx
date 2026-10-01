@@ -14,6 +14,7 @@ export default function Page() {
       title="QR Code Generator"
       description="Turn text or a URL into a downloadable QR code."
       category="Web"
+      path="/tools/web/qr-code-generator"
     >
       <QrGenerator />
       <RelatedTools toolId="qr-generator" />

@@ -10,6 +10,10 @@ export async function compressImage(
   file: File,
   quality: number,
 ): Promise<CompressedImage> {
+  const valid = await validateImageFile(file);
+  if (!valid.ok) throw new Error(valid.message);
+  if (quality < 0.3 || quality > 0.95)
+    throw new Error("Unsupported image quality.");
   const bitmap = await createImageBitmap(file);
   const canvas = document.createElement("canvas");
   canvas.width = bitmap.width;
@@ -36,3 +40,4 @@ export async function compressImage(
     mime,
   };
 }
+import { validateImageFile } from "./validate";

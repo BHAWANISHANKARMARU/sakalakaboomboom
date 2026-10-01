@@ -7,11 +7,13 @@ Verified on 2 October 2026 in the implementation worktree with Next.js 16.3.8 an
 - `npm run format:check`: passed.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed with zero warnings.
-- `npm test -- --run`: 12 files and 22 tests passed.
-- `npm run test:e2e -- tests/e2e/site.spec.ts`: 10 browser tests passed.
+- `npm test -- --run`: 12 files and 25 tests passed.
+- `npm run test:e2e -- tests/e2e/site.spec.ts`: 11 browser tests passed, including shareable homepage search.
 - `npm run build`: passed; 33 static pages generated, including `robots.txt` and `sitemap.xml`.
 
 Browser checks covered the homepage, tool index, all five live tools, About, and Privacy Policy at 320, 375, 390, 414, 768, 1024, 1280, and 1440 CSS pixels. Every checked route had one H1, no document-level horizontal overflow, and no console errors. Axe reported no violations on the homepage or Word Counter. Word Counter and JSON Formatter completion flows passed in Chromium.
+
+The final review fix pass also verified QR capacity by error-correction level, processing-layer validation for PDF/image/QR operations, route-aware canonical metadata, tool breadcrumb/application structured data, complete image result details, and URL-backed search state.
 
 ## Manual inspection
 

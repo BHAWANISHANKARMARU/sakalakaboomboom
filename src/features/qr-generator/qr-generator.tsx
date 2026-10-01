@@ -10,14 +10,21 @@ export function QrGenerator() {
     [result, setResult] = useState(""),
     [message, setMessage] = useState("");
   async function run() {
-    const valid = validateQrInput(value);
+    const valid = validateQrInput(value, level);
     if (!valid.ok) {
       setMessage(valid.message);
       setResult("");
       return;
     }
-    setResult(await generateQrPng(value, { width: size, level }));
-    setMessage("Your QR code is ready.");
+    try {
+      setResult(await generateQrPng(value, { width: size, level }));
+      setMessage("Your QR code is ready.");
+    } catch {
+      setResult("");
+      setMessage(
+        "This QR code could not be created. Shorten the content and try again.",
+      );
+    }
   }
   return (
     <section className="border-line grid gap-5 rounded-lg border p-4 sm:p-7">

@@ -9,6 +9,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: { default: "Sahaj Tools", template: "%s | Sahaj Tools" },
   description: siteConfig.description,
+  alternates: { canonical: "./" },
+  openGraph: {
+    title: "Sahaj Tools",
+    description: siteConfig.description,
+    siteName: "Sahaj Tools",
+    type: "website",
+    url: "./",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

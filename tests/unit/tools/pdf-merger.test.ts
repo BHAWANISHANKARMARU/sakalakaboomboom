@@ -26,6 +26,11 @@ describe("PDF merger", () => {
     const merged = await PDFDocument.load(bytes);
     expect(merged.getPageCount()).toBe(2);
   });
+  it("enforces validation inside the processing function", async () => {
+    await expect(mergePdfFiles([await pdfFile("one.pdf")])).rejects.toThrow(
+      "at least two",
+    );
+  });
   it("sanitises download names", () =>
     expect(sanitizeDownloadFilename("../../My file!", "pdf")).toBe(
       "My-file.pdf",
