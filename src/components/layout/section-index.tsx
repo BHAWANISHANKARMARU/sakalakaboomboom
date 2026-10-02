@@ -1,26 +1,34 @@
+import type { ReactNode } from "react";
 import { PageContainer } from "./page-container";
-import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { InteriorHero } from "./interior-hero";
+import { StatusNotice } from "@/components/ui/status-notice";
+
 export function SectionIndex({
   title,
   description,
+  eyebrow = "StudyTools.in",
   children,
 }: {
   title: string;
   description: string;
-  children?: React.ReactNode;
+  eyebrow?: string;
+  children?: ReactNode;
 }) {
   return (
     <main>
-      <PageContainer className="grid gap-8 py-10 sm:py-14">
-        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: title }]} />
-        <header className="max-w-3xl">
-          <h1>{title}</h1>
-          <p className="text-muted mt-4 text-lg">{description}</p>
-        </header>
+      <PageContainer className="interior-page">
+        <InteriorHero
+          title={title}
+          description={description}
+          eyebrow={eyebrow}
+          breadcrumbs={[{ label: "Home", href: "/" }, { label: title }]}
+        />
         {children ?? (
-          <p className="border-line text-muted border-t pt-6">
-            We are reviewing resources for this section before publication.
-          </p>
+          <StatusNotice
+            title="Reviewed before publication"
+            description="Useful resources for this section are being prepared and checked before they are published."
+            tone="planned"
+          />
         )}
       </PageContainer>
     </main>

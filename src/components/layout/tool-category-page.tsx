@@ -1,5 +1,7 @@
 import { SectionIndex } from "./section-index";
 import { CategoryCard } from "@/components/ui/category-card";
+import { ResponsiveGrid } from "./responsive-grid";
+import { StatusNotice } from "@/components/ui/status-notice";
 import { getLiveTools } from "@/lib/content/registry";
 import type { ToolCategory } from "@/types/content";
 export function ToolCategoryPage({
@@ -15,7 +17,7 @@ export function ToolCategoryPage({
   return (
     <SectionIndex title={title} description={description}>
       {list.length ? (
-        <div className="grid gap-x-7 sm:grid-cols-2">
+        <ResponsiveGrid columns={2}>
           {list.map((tool) => (
             <CategoryCard
               key={tool.id}
@@ -24,11 +26,13 @@ export function ToolCategoryPage({
               description={tool.description}
             />
           ))}
-        </div>
+        </ResponsiveGrid>
       ) : (
-        <p className="border-line text-muted border-t pt-6">
-          Tools in this category are being tested before publication.
-        </p>
+        <StatusNotice
+          title="Tools are being tested"
+          description="Tools in this category will appear here after functional and privacy review."
+          tone="planned"
+        />
       )}
     </SectionIndex>
   );
