@@ -4,9 +4,9 @@ export function RelatedTools({ toolId }: { toolId: string }) {
   const tools = getRelatedTools(toolId, "en");
   if (!tools.length) return null;
   return (
-    <section className="grid gap-4">
+    <section className="related-tools">
       <h2>Related tools</h2>
-      <div className="flex flex-wrap gap-3">
+      <div>
         {tools.map((tool) => (
           <Link className="button secondary" href={tool.url} key={tool.id}>
             {tool.title}

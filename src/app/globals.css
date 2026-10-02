@@ -924,6 +924,95 @@ a.directory-card:hover,
   color: #5f6b7e;
   text-transform: uppercase;
 }
+.tool-page {
+  gap: 32px;
+}
+.tool-page .interior-hero {
+  padding-bottom: 28px;
+}
+.tool-workspace {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: white;
+  padding: clamp(18px, 3vw, 34px);
+  box-shadow: 0 10px 34px rgb(18 51 91 / 7%);
+}
+.tool-workspace textarea,
+.tool-workspace pre,
+.tool-workspace code,
+.tool-workspace img,
+.tool-workspace canvas {
+  max-width: 100%;
+}
+.tool-workspace pre,
+.tool-workspace code {
+  overflow-x: auto;
+}
+.file-uploader {
+  display: grid;
+  min-height: 170px;
+  cursor: pointer;
+  place-items: center;
+  border: 2px dashed #bfd1e7;
+  border-radius: 11px;
+  background: #f7faff;
+  padding: 26px;
+  color: var(--navy);
+  text-align: center;
+  font-weight: 750;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.file-uploader:hover,
+.file-uploader:focus-within {
+  border-color: var(--blue);
+  background: #f0f6ff;
+}
+.tool-result {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  padding: 18px;
+}
+.tool-instructions {
+  display: grid;
+  max-width: 820px;
+  gap: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 34px;
+}
+.tool-instructions h2,
+.tool-instructions p {
+  margin: 0;
+}
+.tool-instructions p {
+  color: var(--muted);
+}
+.related-tools {
+  display: grid;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+}
+.related-tools > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+@media (min-width: 1440px) {
+  .tool-workspace {
+    padding: 42px;
+  }
+  .file-uploader {
+    min-height: 210px;
+    font-size: 18px;
+  }
+}
 @media (min-width: 1440px) {
   .directory-card,
   .resource-card {

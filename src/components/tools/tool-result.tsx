@@ -7,10 +7,7 @@ export function ToolResult({
   status?: "polite" | "assertive";
 }) {
   return (
-    <div
-      aria-live={status}
-      className="border-line bg-paper rounded-md border p-4"
-    >
+    <div aria-live={status} className="tool-result">
       {children}
     </div>
   );
