@@ -1015,6 +1015,35 @@ a.directory-card:hover,
   font-size: 17px;
   line-height: 1.8;
 }
+.article-page {
+  max-width: 1260px;
+}
+.article-content {
+  display: grid;
+  max-width: 820px;
+  gap: 20px;
+  color: #344158;
+  font-size: 17px;
+  line-height: 1.8;
+}
+.article-content h2 {
+  margin: 26px 0 0;
+  font-size: 27px;
+}
+.article-content h3 {
+  margin: 18px 0 0;
+  font-size: 21px;
+}
+.article-content p,
+.article-content ul,
+.article-content ol {
+  margin: 0;
+}
+.article-content a {
+  color: var(--blue);
+  font-weight: 700;
+  text-decoration: underline;
+}
 .document-content h2 {
   margin: 22px 0 0;
   font-size: 25px;
@@ -1092,8 +1121,13 @@ a.directory-card:hover,
     font-size: 19px;
   }
   .search-page,
-  .document-page {
+  .document-page,
+  .article-page {
     max-width: 1380px;
+  }
+  .article-content {
+    max-width: 920px;
+    font-size: 19px;
   }
 }
 @media (min-width: 1440px) {

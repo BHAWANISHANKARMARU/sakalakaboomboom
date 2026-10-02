@@ -1,22 +1,32 @@
 import type { ReactNode } from "react";
 import { PageContainer } from "@/components/layout/page-container";
+import { InteriorHero } from "@/components/layout/interior-hero";
+
 export function ArticleLayout({
   title,
   description,
   children,
+  category = "Guides",
 }: {
   title: string;
   description: string;
   children: ReactNode;
+  category?: string;
 }) {
   return (
     <main>
-      <PageContainer className="grid max-w-3xl gap-8 py-12">
-        <header>
-          <h1>{title}</h1>
-          <p className="text-muted mt-4 text-lg">{description}</p>
-        </header>
-        <article className="grid gap-5">{children}</article>
+      <PageContainer className="interior-page article-page">
+        <InteriorHero
+          title={title}
+          description={description}
+          eyebrow={category}
+          breadcrumbs={[
+            { label: "Home", href: "/" },
+            { label: category, href: "/blog" },
+            { label: title },
+          ]}
+        />
+        <article className="article-content">{children}</article>
       </PageContainer>
     </main>
   );
