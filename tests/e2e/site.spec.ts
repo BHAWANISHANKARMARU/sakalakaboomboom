@@ -97,3 +97,29 @@ test("homepage uses readable wide-desktop scale", async ({ page }) => {
   expect(contentWidth).toBeGreaterThanOrEqual(1600);
   expect(navFontSize).toBeGreaterThanOrEqual(18);
 });
+
+test("tool pages match the approved wide-desktop physical scale", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/tools/pdf/pdf-merger");
+  const headingSize = await page
+    .locator("h1")
+    .evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).fontSize),
+    );
+  const noticeCopySize = await page
+    .locator(".status-notice p")
+    .evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).fontSize),
+    );
+  const navSize = await page
+    .locator(".site-nav-link")
+    .first()
+    .evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).fontSize),
+    );
+  expect(headingSize).toBeGreaterThanOrEqual(90);
+  expect(noticeCopySize).toBeGreaterThanOrEqual(18);
+  expect(navSize).toBeGreaterThanOrEqual(20);
+});

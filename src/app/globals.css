@@ -1331,6 +1331,79 @@ a.directory-card:hover,
     min-height: 68px;
     font-size: 15px;
   }
+  .site-header-inner {
+    min-height: 98px;
+  }
+  .site-brand {
+    font-size: 31px;
+  }
+  .site-nav-link {
+    font-size: 21px;
+  }
+  .site-header-search {
+    width: 285px;
+    height: 56px;
+  }
+  .site-header-search input {
+    font-size: 17px;
+  }
+  .interior-page {
+    gap: 78px;
+    padding-top: 54px;
+  }
+  .interior-page nav[aria-label="Breadcrumb"] {
+    font-size: 18px;
+  }
+  .interior-hero {
+    gap: 34px;
+    padding-bottom: 48px;
+  }
+  .interior-hero h1 {
+    font-size: 6rem;
+  }
+  .interior-hero h1 + p {
+    max-width: 960px;
+    font-size: 25px;
+  }
+  .interior-hero .eyebrow {
+    font-size: 14px;
+  }
+  .status-notice {
+    gap: 20px;
+    padding: 28px;
+  }
+  .status-notice > span {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    font-size: 18px;
+  }
+  .status-notice strong {
+    font-size: 20px;
+  }
+  .status-notice p {
+    max-width: 850px;
+    margin-top: 6px;
+    font-size: 18px;
+  }
+  .tool-workspace {
+    padding: 58px;
+  }
+  .file-uploader {
+    min-height: 270px;
+    padding: 38px;
+    font-size: 21px;
+  }
+  .file-uploader small {
+    font-size: 17px;
+  }
+  .tool-instructions h2,
+  .related-tools h2 {
+    font-size: 31px;
+  }
+  .tool-instructions p {
+    font-size: 19px;
+  }
 }
 @media (max-width: 900px) {
   .home-tool-grid,
