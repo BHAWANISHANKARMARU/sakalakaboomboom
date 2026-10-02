@@ -1,8 +1,8 @@
-import { ArticleLayout } from "@/components/articles/article-layout";
+import { DocumentLayout } from "@/components/layout/document-layout";
 import { siteConfig } from "@/config/site";
 export default function Page() {
   return (
-    <ArticleLayout
+    <DocumentLayout
       title="Contact"
       description="Report a tool problem, correction or accessibility issue."
     >
@@ -16,6 +16,6 @@ export default function Page() {
         </a>
         . Please do not send confidential files or personal information.
       </p>
-    </ArticleLayout>
+    </DocumentLayout>
   );
 }

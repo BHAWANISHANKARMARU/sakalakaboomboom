@@ -1,9 +1,9 @@
-import { ArticleLayout } from "@/components/articles/article-layout";
+import { DocumentLayout } from "@/components/layout/document-layout";
 export default function Page() {
   return (
-    <ArticleLayout
+    <DocumentLayout
       title="Privacy Policy"
-      description="How Sahaj Tools handles information."
+      description="How StudyTools.in handles information."
     >
       <h2>Browser processing</h2>
       <p>
@@ -18,6 +18,6 @@ export default function Page() {
       </p>
       <h2>Contact</h2>
       <p>Messages you send voluntarily are used to respond to your enquiry.</p>
-    </ArticleLayout>
+    </DocumentLayout>
   );
 }

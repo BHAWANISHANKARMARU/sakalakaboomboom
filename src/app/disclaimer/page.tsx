@@ -1,7 +1,7 @@
-import { ArticleLayout } from "@/components/articles/article-layout";
+import { DocumentLayout } from "@/components/layout/document-layout";
 export default function Page() {
   return (
-    <ArticleLayout
+    <DocumentLayout
       title="Disclaimer"
       description="Important limits on our tools and informational guides."
     >
@@ -13,6 +13,6 @@ export default function Page() {
         For syllabus, exam dates, eligibility, notices and policies, confirm the
         latest information on the responsible official website.
       </p>
-    </ArticleLayout>
+    </DocumentLayout>
   );
 }

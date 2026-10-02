@@ -1,9 +1,9 @@
-import { ArticleLayout } from "@/components/articles/article-layout";
+import { DocumentLayout } from "@/components/layout/document-layout";
 export default function Page() {
   return (
-    <ArticleLayout
+    <DocumentLayout
       title="Terms of Use"
-      description="Plain-language conditions for using Sahaj Tools."
+      description="Plain-language conditions for using StudyTools.in."
     >
       <p>
         Use the site lawfully and do not attempt to overload, disrupt or misuse
@@ -14,6 +14,6 @@ export default function Page() {
         Tools are provided on a reasonable-effort basis and may change as
         browsers and file formats evolve.
       </p>
-    </ArticleLayout>
+    </DocumentLayout>
   );
 }

@@ -1,8 +1,8 @@
-import { ArticleLayout } from "@/components/articles/article-layout";
+import { DocumentLayout } from "@/components/layout/document-layout";
 export default function Page() {
   return (
-    <ArticleLayout
-      title="About Sahaj Tools"
+    <DocumentLayout
+      title="About StudyTools.in"
       description="Practical digital utilities and carefully reviewed guidance for Indian internet users."
     >
       <p>
@@ -15,6 +15,6 @@ export default function Page() {
         review. Current syllabus, dates and official notices require
         verification against the relevant authority.
       </p>
-    </ArticleLayout>
+    </DocumentLayout>
   );
 }

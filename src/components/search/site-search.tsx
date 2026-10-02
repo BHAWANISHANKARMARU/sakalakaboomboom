@@ -13,12 +13,12 @@ export function SiteSearch({
   const [query, setQuery] = useState(initialQuery);
   const results = useMemo(() => searchIndex(query, records), [query, records]);
   return (
-    <div className="grid gap-6">
-      <label className="text-navy grid gap-2 font-bold">
+    <div className="site-search-page">
+      <label className="site-search-label">
         Search tools and guides
         <input
           autoFocus
-          className="field font-normal"
+          className="field"
           type="search"
           value={query}
           onChange={(event) => {
@@ -34,26 +34,25 @@ export function SiteSearch({
       </label>
       {query.trim() ? (
         results.length ? (
-          <ul className="divide-line border-line divide-y border-y">
+          <ul className="search-results">
             {results.map((item) => (
               <li key={item.url}>
-                <Link className="hover:text-blue block py-5" href={item.url}>
-                  <span className="text-muted text-xs font-bold tracking-wider uppercase">
-                    {item.category}
-                  </span>
-                  <h2 className="mt-1 text-xl">{item.title}</h2>
-                  <p className="text-muted mt-1 text-sm">{item.description}</p>
+                <Link href={item.url}>
+                  <span>{item.category}</span>
+                  <h2>{item.title}</h2>
+                  <p>{item.description}</p>
+                  <small>{item.url}</small>
                 </Link>
               </li>
             ))}
           </ul>
         ) : (
-          <p role="status" className="border-line bg-paper rounded border p-4">
+          <p role="status" className="search-empty">
             No matches. Try a shorter phrase or browse the tool categories.
           </p>
         )
       ) : (
-        <p className="text-muted">
+        <p className="search-empty">
           Search five live tools. Reviewed guides will appear here as they are
           published.
         </p>
