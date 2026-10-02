@@ -8,7 +8,7 @@ export function StatusNotice({
   tone?: "info" | "privacy" | "planned";
 }) {
   return (
-    <aside
+    <div
       className={`status-notice status-notice-${tone}`}
       role="status"
       aria-label={title}
@@ -18,6 +18,6 @@ export function StatusNotice({
         <strong>{title}</strong>
         <p>{description}</p>
       </div>
-    </aside>
+    </div>
   );
 }

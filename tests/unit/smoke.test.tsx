@@ -4,13 +4,13 @@ import { describe, expect, it } from "vitest";
 import Home from "@/app/page";
 
 describe("application scaffold", () => {
-  it("renders the Sahaj Tools homepage heading", () => {
+  it("renders the StudyTools homepage heading", () => {
     render(<Home />);
 
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: "Useful online tools and guides for everyday tasks",
+        name: "Free Online Tools & Study Resources for India",
       }),
     ).toBeInTheDocument();
   });

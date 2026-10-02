@@ -7,13 +7,13 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  title: { default: "Sahaj Tools", template: "%s | Sahaj Tools" },
+  title: { default: siteConfig.name, template: `%s | ${siteConfig.name}` },
   description: siteConfig.description,
   alternates: { canonical: "./" },
   openGraph: {
-    title: "Sahaj Tools",
+    title: siteConfig.name,
     description: siteConfig.description,
-    siteName: "Sahaj Tools",
+    siteName: siteConfig.name,
     type: "website",
     url: "./",
   },

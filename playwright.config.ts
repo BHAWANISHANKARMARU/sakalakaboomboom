@@ -6,10 +6,10 @@ export default defineConfig({
   workers: 1,
   use: {
     baseURL: "http://localhost:3000",
-    trace: "retain-on-failure",
+    trace: "off",
   },
   webServer: {
-    command: "npm run dev",
+    command: "npm run dev -- --webpack",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },

@@ -1,37 +1,93 @@
 import Link from "next/link";
 import { PageContainer } from "./page-container";
+
+const groups = [
+  {
+    title: "Tools",
+    links: [
+      ["PDF Tools", "/tools/pdf"],
+      ["Image Tools", "/tools/image"],
+      ["Text Tools", "/tools/text"],
+      ["Developer Tools", "/tools/web"],
+      ["All Tools", "/tools"],
+    ],
+  },
+  {
+    title: "Education",
+    links: [
+      ["Class 11", "/education/class-11"],
+      ["Class 12", "/education/class-12"],
+      ["NCERT", "/education/ncert"],
+      ["CBSE", "/education/cbse"],
+    ],
+  },
+  {
+    title: "Explore",
+    links: [
+      ["Competitive Exams", "/exams"],
+      ["Technology", "/technology"],
+      ["How-to Guides", "/how-to"],
+      ["Blog", "/blog"],
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      ["About", "/about"],
+      ["Contact", "/contact"],
+      ["Privacy Policy", "/privacy-policy"],
+      ["Terms", "/terms"],
+      ["Disclaimer", "/disclaimer"],
+    ],
+  },
+] as const;
+
 export function Footer() {
   return (
-    <footer className="border-line bg-paper mt-20 border-t py-10">
+    <footer className="site-footer">
       <PageContainer>
-        <div className="grid gap-8 sm:grid-cols-2">
-          <div>
-            <p className="text-navy font-black">Sahaj Tools</p>
-            <p className="text-muted text-sm">
-              Practical tools and carefully reviewed guides for everyday tasks.
+        <div className="site-footer-grid">
+          <div className="site-footer-about">
+            <Link
+              href="/"
+              className="site-brand site-brand-footer"
+              aria-label="StudyTools.in home"
+            >
+              <span className="site-brand-mark" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span>
+                StudyTools<span>.in</span>
+              </span>
+            </Link>
+            <p>
+              Free online tools and carefully reviewed learning resources for
+              students and everyday users in India.
+            </p>
+            <p className="site-footer-privacy">
+              Browser-based tools keep files on your device unless a tool
+              clearly says otherwise.
             </p>
           </div>
-          <nav
-            aria-label="Footer navigation"
-            className="flex flex-wrap content-start gap-x-5 gap-y-2 text-sm font-semibold"
-          >
-            {[
-              ["About", "/about"],
-              ["Contact", "/contact"],
-              ["Privacy", "/privacy-policy"],
-              ["Terms", "/terms"],
-              ["Disclaimer", "/disclaimer"],
-            ].map(([label, href]) => (
-              <Link href={href} key={href}>
-                {label}
-              </Link>
-            ))}
-          </nav>
+          {groups.map((group) => (
+            <nav aria-label={`${group.title} footer links`} key={group.title}>
+              <h2>{group.title}</h2>
+              {group.links.map(([label, href]) => (
+                <Link href={href} key={href}>
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          ))}
         </div>
-        <p className="border-line text-muted mt-8 border-t pt-5 text-xs">
-          Files used in browser tools stay on your device unless a tool clearly
-          says otherwise.
-        </p>
+        <div className="site-footer-bottom">
+          <span>
+            © {new Date().getFullYear()} StudyTools.in. All rights reserved.
+          </span>
+          <span>Useful by design. Made for India.</span>
+        </div>
       </PageContainer>
     </footer>
   );

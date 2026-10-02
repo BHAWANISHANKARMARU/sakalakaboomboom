@@ -8,7 +8,7 @@ describe("public routes", () => {
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: "Useful online tools and guides for everyday tasks",
+        name: "Free Online Tools & Study Resources for India",
       }),
     ).toBeInTheDocument();
     expect(
@@ -17,5 +17,14 @@ describe("public routes", () => {
     expect(
       screen.queryByRole("link", { name: /PDF Compressor/ }),
     ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Tools by Category" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Student & Education Resources" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Frequently Asked Questions" }),
+    ).toBeInTheDocument();
   });
 });

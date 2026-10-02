@@ -7,8 +7,8 @@ describe("metadata", () => {
       description: "Practical online tools.",
       path: "/tools",
     });
-    expect(value.alternates?.canonical).toBe("https://sahaj.tools/tools");
-    expect(value.title).toBe("Online tools | Sahaj Tools");
+    expect(value.alternates?.canonical).toBe("https://studytools.in/tools");
+    expect(value.title).toBe("Online tools | StudyTools.in");
   });
   it("gives the root page a canonical and Open Graph URL", async () => {
     const { metadata } = await import("@/app/layout");
