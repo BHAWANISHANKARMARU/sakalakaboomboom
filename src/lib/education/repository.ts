@@ -127,16 +127,11 @@ export const getPublishedLesson = (
       item.locale === locale &&
       item.status === "published",
   );
-  return lesson && chapter
-    ? {
-        ...lesson,
-        lesson,
-        chapter,
-        book,
-        subject: getSubjectDirectory(classSlug, subjectSlug, locale)!,
-        classRecord: getClassDirectory(classSlug, locale)!,
-      }
-    : undefined;
+  const subject = getSubjectDirectory(classSlug, subjectSlug, locale);
+  const classRecord = getClassDirectory(classSlug, locale);
+  if (!lesson || !chapter || !book || !subject || !classRecord)
+    return undefined;
+  return { ...lesson, lesson, chapter, book, subject, classRecord };
 };
 
 export const getPublishedLessonParams = (locale: Locale) =>
