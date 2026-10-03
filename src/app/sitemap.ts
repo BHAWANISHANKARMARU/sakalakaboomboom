@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
 import { getLiveTools, getPublishedArticles } from "@/lib/content/registry";
+import { getPublishedEducationSitemapRecords } from "@/lib/education/repository";
 const staticPaths = [
   "/",
   "/tools",
@@ -26,14 +27,23 @@ const staticPaths = [
   "/disclaimer",
 ];
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
+  const basicRoutes = [
     ...staticPaths,
     ...getLiveTools("en").map((item) => item.url),
     ...getPublishedArticles("en").map(
       (item) => `/${item.section}/${item.slug}`,
     ),
-  ].map((path) => ({
-    url: new URL(path, siteConfig.url).toString(),
-    changeFrequency: path.startsWith("/tools/") ? "monthly" : "weekly",
+  ].map(
+    (path) =>
+      ({
+        url: new URL(path, siteConfig.url).toString(),
+        changeFrequency: path.startsWith("/tools/") ? "monthly" : "weekly",
+      }) satisfies MetadataRoute.Sitemap[number],
+  );
+  const educationRoutes = getPublishedEducationSitemapRecords().map((item) => ({
+    url: new URL(item.path, siteConfig.url).toString(),
+    lastModified: item.lastModified,
+    changeFrequency: "monthly" as const,
   }));
+  return [...basicRoutes, ...educationRoutes];
 }

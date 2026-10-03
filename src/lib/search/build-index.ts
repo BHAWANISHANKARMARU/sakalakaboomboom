@@ -1,4 +1,5 @@
 import { getLiveTools, getPublishedArticles } from "@/lib/content/registry";
+import { getEducationSearchRecords } from "@/lib/education/repository";
 export type SearchRecord = {
   title: string;
   description: string;
@@ -22,6 +23,13 @@ export function buildSearchIndex(): SearchRecord[] {
       url: `/${article.section}/${article.slug}`,
       terms:
         `${article.title} ${article.description} ${article.section}`.toLowerCase(),
+    })),
+    ...getEducationSearchRecords("en").map((record) => ({
+      title: record.title,
+      description: record.description,
+      category: record.category,
+      url: record.url,
+      terms: record.terms,
     })),
   ];
 }

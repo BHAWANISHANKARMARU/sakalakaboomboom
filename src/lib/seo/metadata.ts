@@ -5,17 +5,27 @@ export function buildPageMetadata({
   description,
   path,
   noIndex = false,
+  languageAlternates,
 }: {
   title: string;
   description: string;
   path: string;
   noIndex?: boolean;
+  languageAlternates?: Record<string, string>;
 }): Metadata {
   const canonical = new URL(path, siteConfig.url).toString();
+  const languages = languageAlternates
+    ? Object.fromEntries(
+        Object.entries(languageAlternates).map(([locale, value]) => [
+          locale,
+          new URL(value, siteConfig.url).toString(),
+        ]),
+      )
+    : undefined;
   return {
     title: `${title} | ${siteConfig.name}`,
     description,
-    alternates: { canonical },
+    alternates: { canonical, languages },
     openGraph: {
       title,
       description,

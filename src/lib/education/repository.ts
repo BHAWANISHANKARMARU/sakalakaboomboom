@@ -209,3 +209,43 @@ export const getEducationBookParams = () =>
         bookSlug: book.slug,
       };
     });
+
+export const getPublishedEducationSitemapRecords = () => {
+  const records: Array<{ path: string; lastModified?: string }> = [
+    { path: "/hi/education" },
+  ];
+  for (const locale of ["en", "hi"] as const) {
+    const prefix = locale === "hi" ? "/hi" : "";
+    for (const classRecord of educationClasses.filter(
+      (item) => item.status === "published",
+    )) {
+      records.push({
+        path: `${prefix}/education/${classRecord.slug}`,
+        lastModified: classRecord.source.verifiedAt,
+      });
+    }
+    for (const book of educationBooks.filter(
+      (item) => item.status === "published",
+    )) {
+      const subject = educationSubjects.find(
+        (item) => item.id === book.subjectId,
+      )!;
+      const classRecord = educationClasses.find(
+        (item) => item.id === subject.classId,
+      )!;
+      records.push(
+        {
+          path: `${prefix}/education/${classRecord.slug}/${subject.slug}`,
+          lastModified: subject.source.verifiedAt,
+        },
+        {
+          path: `${prefix}/education/${classRecord.slug}/${subject.slug}/${book.slug}`,
+          lastModified: book.source.verifiedAt,
+        },
+      );
+    }
+    for (const lesson of getEducationSearchRecords(locale))
+      records.push({ path: lesson.url, lastModified: lesson.updatedAt });
+  }
+  return records;
+};

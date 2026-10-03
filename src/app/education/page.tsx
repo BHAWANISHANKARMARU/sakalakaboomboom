@@ -3,7 +3,9 @@ import { ContentSection } from "@/components/layout/content-section";
 import { ResponsiveGrid } from "@/components/layout/responsive-grid";
 import { ResourceCard } from "@/components/ui/resource-card";
 import { StatusNotice } from "@/components/ui/status-notice";
+import { getEducationLandingMetadata } from "@/lib/education/metadata";
 import { getClassDirectory } from "@/lib/education/repository";
+export const metadata = getEducationLandingMetadata("en");
 export default function Page() {
   const classes = ["class-9", "class-10", "class-11", "class-12"].map((slug) =>
     getClassDirectory(slug, "en")!,

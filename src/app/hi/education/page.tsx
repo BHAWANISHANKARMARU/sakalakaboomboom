@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { EducationPageShell } from "@/components/education/education-page-shell";
+import { getEducationLandingMetadata } from "@/lib/education/metadata";
 import {
   getEducationClassParams,
   getClassDirectory,
 } from "@/lib/education/repository";
+export const metadata = getEducationLandingMetadata("hi");
 export default function Page() {
   const classes = getEducationClassParams().map(({ classSlug }) =>
     getClassDirectory(classSlug, "hi")!,
