@@ -4,7 +4,7 @@ import { searchIndex } from "@/lib/search/rank-results";
 describe("search", () => {
   it("indexes only published tools and ranks exact titles first", () => {
     const index = buildSearchIndex();
-    expect(index).toHaveLength(5);
+    expect(index).toHaveLength(25);
     expect(searchIndex("word counter", index)[0]?.title).toBe("Word Counter");
     expect(index.some((item) => item.title === "PDF Compressor")).toBe(false);
   });

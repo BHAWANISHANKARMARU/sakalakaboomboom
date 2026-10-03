@@ -9,17 +9,17 @@ import {
 } from "@/lib/content/registry";
 
 describe("content registry", () => {
-  it("contains the complete unique tool roadmap and six categories", () => {
-    expect(tools).toHaveLength(20);
-    expect(new Set(tools.map((tool) => tool.id)).size).toBe(20);
+  it("contains the expanded unique tool roadmap and six categories", () => {
+    expect(tools).toHaveLength(37);
+    expect(new Set(tools.map((tool) => tool.id)).size).toBe(37);
     expect(
       new Set(tools.map((tool) => `${tool.category}/${tool.slug}`)).size,
-    ).toBe(20);
+    ).toBe(37);
     expect(categories).toHaveLength(6);
   });
 
-  it("publishes only the first five working tools", () => {
-    expect(getLiveTools("en")).toHaveLength(5);
+  it("publishes the five foundation tools and twenty everyday tools", () => {
+    expect(getLiveTools("en")).toHaveLength(25);
     expect(getToolBySlug("pdf", "pdf-compressor", "en")).toBeUndefined();
     expect(getToolBySlug("pdf", "pdf-merger", "hi")?.title).toBe("PDF Merger");
   });

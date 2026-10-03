@@ -29,6 +29,26 @@ const routes = [
   "/tools/web",
   "/tools/web/json-formatter-validator",
   "/tools/web/qr-code-generator",
+  "/tools/calculators/age-calculator",
+  "/tools/calculators/bmi-calculator",
+  "/tools/calculators/percentage-calculator",
+  "/tools/calculators/discount-calculator",
+  "/tools/calculators/gst-calculator",
+  "/tools/calculators/emi-calculator",
+  "/tools/calculators/sip-calculator",
+  "/tools/calculators/date-difference-calculator",
+  "/tools/calculators/unit-converter",
+  "/tools/calculators/fuel-cost-calculator",
+  "/tools/text/case-converter",
+  "/tools/text/remove-duplicate-lines",
+  "/tools/text/text-sorter",
+  "/tools/text/find-replace-text",
+  "/tools/text/whitespace-cleaner",
+  "/tools/text/line-counter",
+  "/tools/web/url-encoder-decoder",
+  "/tools/web/base64-encoder-decoder",
+  "/tools/web/password-generator",
+  "/tools/web/uuid-generator",
 ];
 for (const width of [320, 375, 390, 414, 768, 1024, 1280, 1440]) {
   test(`routes have no console errors or overflow at ${width}px`, async ({
@@ -132,4 +152,29 @@ test("tool pages match the approved wide-desktop physical scale", async ({
   expect(headingSize).toBeGreaterThanOrEqual(90);
   expect(noticeCopySize).toBeGreaterThanOrEqual(18);
   expect(navSize).toBeGreaterThanOrEqual(20);
+});
+
+test("new everyday tools render and calculate on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto("/tools/calculators/percentage-calculator");
+  await page.getByRole("spinbutton", { name: "Part" }).fill("25");
+  await page.getByRole("spinbutton", { name: "Total" }).fill("200");
+  await expect(page.getByText("12.5%")).toBeVisible();
+  expect(
+    await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth <=
+        document.documentElement.clientWidth,
+    ),
+  ).toBe(true);
+
+  await page.goto("/tools/text/case-converter");
+  await page.getByRole("textbox", { name: "Your text" }).fill("hello india");
+  await expect(page.locator(".tool-output pre")).toHaveText("HELLO INDIA");
+
+  await page.goto("/tools/web/password-generator");
+  await page.getByRole("button", { name: "Generate" }).click();
+  await expect(page.locator(".tool-output pre")).not.toHaveText(
+    "Your result will appear here.",
+  );
 });

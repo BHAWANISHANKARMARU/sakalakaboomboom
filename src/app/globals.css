@@ -1521,3 +1521,50 @@ a.directory-card:hover,
     transition: none !important;
   }
 }
+
+.everyday-tool {
+  display: grid;
+  gap: 20px;
+}
+.tool-field {
+  display: grid;
+  gap: 8px;
+  color: var(--navy);
+  font-weight: 700;
+}
+.tool-field input,
+.tool-field select,
+.tool-field textarea {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 11px 13px;
+  color: var(--navy);
+  font: inherit;
+  font-weight: 400;
+}
+.tool-field textarea {
+  min-height: 180px;
+  resize: vertical;
+}
+.tool-output {
+  min-width: 0;
+  border: 1px solid #b9d5fa;
+  border-radius: 10px;
+  background: #f3f8ff;
+  padding: 20px;
+}
+.tool-output pre {
+  margin: 10px 0 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font: inherit;
+}
+.tool-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
