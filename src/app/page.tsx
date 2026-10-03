@@ -141,7 +141,7 @@ const guides = [
 
 const faqs = [
   [
-    "Are the tools on StudyTools.in free?",
+    "Are the tools on Sakalakaboomboom free?",
     "Yes. The available tools are free to use and do not require an account.",
   ],
   [

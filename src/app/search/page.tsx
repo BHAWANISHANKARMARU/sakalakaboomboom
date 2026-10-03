@@ -6,7 +6,7 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 import { InteriorHero } from "@/components/layout/interior-hero";
 export const metadata: Metadata = buildPageMetadata({
   title: "Search",
-  description: "Search StudyTools.in and reviewed guides.",
+  description: "Search Sakalakaboomboom and reviewed guides.",
   path: "/search",
   noIndex: true,
 });

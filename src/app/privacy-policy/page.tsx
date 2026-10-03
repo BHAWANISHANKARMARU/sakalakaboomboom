@@ -3,7 +3,7 @@ export default function Page() {
   return (
     <DocumentLayout
       title="Privacy Policy"
-      description="How StudyTools.in handles information."
+      description="How Sakalakaboomboom handles information."
     >
       <h2>Browser processing</h2>
       <p>

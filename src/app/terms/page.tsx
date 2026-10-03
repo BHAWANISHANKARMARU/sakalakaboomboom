@@ -3,7 +3,7 @@ export default function Page() {
   return (
     <DocumentLayout
       title="Terms of Use"
-      description="Plain-language conditions for using StudyTools.in."
+      description="Plain-language conditions for using Sakalakaboomboom."
     >
       <p>
         Use the site lawfully and do not attempt to overload, disrupt or misuse

@@ -46,14 +46,18 @@ export function Header() {
   return (
     <header className="site-header">
       <PageContainer className="site-header-inner">
-        <Link href="/" className="site-brand" aria-label="StudyTools.in home">
+        <Link
+          href="/"
+          className="site-brand"
+          aria-label="Sakalakaboomboom home"
+        >
           <span className="site-brand-mark" aria-hidden="true">
             <i />
             <i />
             <i />
           </span>
           <span>
-            StudyTools<span>.in</span>
+            Sakalaka<span>boomboom</span>
           </span>
         </Link>
         <nav aria-label="Primary navigation" className="site-desktop-nav">

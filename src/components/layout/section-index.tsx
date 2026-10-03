@@ -6,7 +6,7 @@ import { StatusNotice } from "@/components/ui/status-notice";
 export function SectionIndex({
   title,
   description,
-  eyebrow = "StudyTools.in",
+  eyebrow = "Sakalakaboomboom",
   children,
 }: {
   title: string;

@@ -35,4 +35,12 @@ describe("site shell", () => {
     const { container } = render(<AdPlaceholder />);
     expect(container).toBeEmptyDOMElement();
   });
+
+  it("links the public Sakalakaboomboom brand to the homepage", () => {
+    render(<Header />);
+
+    expect(
+      screen.getByRole("link", { name: "Sakalakaboomboom home" }),
+    ).toHaveAttribute("href", "/");
+  });
 });

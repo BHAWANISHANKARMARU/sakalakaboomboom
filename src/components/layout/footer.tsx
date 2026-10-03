@@ -51,7 +51,7 @@ export function Footer() {
             <Link
               href="/"
               className="site-brand site-brand-footer"
-              aria-label="StudyTools.in home"
+              aria-label="Sakalakaboomboom home"
             >
               <span className="site-brand-mark" aria-hidden="true">
                 <i />
@@ -59,7 +59,7 @@ export function Footer() {
                 <i />
               </span>
               <span>
-                StudyTools<span>.in</span>
+                Sakalaka<span>boomboom</span>
               </span>
             </Link>
             <p>
@@ -84,7 +84,7 @@ export function Footer() {
         </div>
         <div className="site-footer-bottom">
           <span>
-            © {new Date().getFullYear()} StudyTools.in. All rights reserved.
+            © {new Date().getFullYear()} Sakalakaboomboom. All rights reserved.
           </span>
           <span>Useful by design. Made for India.</span>
         </div>

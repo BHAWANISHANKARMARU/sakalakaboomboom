@@ -2,7 +2,7 @@ import { DocumentLayout } from "@/components/layout/document-layout";
 export default function Page() {
   return (
     <DocumentLayout
-      title="About StudyTools.in"
+      title="About Sakalakaboomboom"
       description="Practical digital utilities and carefully reviewed guidance for Indian internet users."
     >
       <p>

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import Home from "@/app/page";
 
 describe("application scaffold", () => {
-  it("renders the StudyTools homepage heading", () => {
+  it("renders the Sakalakaboomboom homepage heading", () => {
     render(<Home />);
 
     expect(

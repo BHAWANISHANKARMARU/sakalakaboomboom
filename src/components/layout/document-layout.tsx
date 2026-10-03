@@ -17,7 +17,7 @@ export function DocumentLayout({
         <InteriorHero
           title={title}
           description={description}
-          eyebrow="StudyTools.in"
+          eyebrow="Sakalakaboomboom"
           breadcrumbs={[{ label: "Home", href: "/" }, { label: title }]}
         />
         <article className="document-content">{children}</article>

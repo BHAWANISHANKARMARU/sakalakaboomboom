@@ -1,4 +1,21 @@
 import { siteConfig } from "@/config/site";
+
+export const websiteJsonLd = () => ({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteConfig.name,
+  url: siteConfig.url,
+  inLanguage: siteConfig.locale,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: new URL(
+      "/search?q={search_term_string}",
+      siteConfig.url,
+    ).toString(),
+    "query-input": "required name=search_term_string",
+  },
+});
+
 export const breadcrumbJsonLd = (items: { name: string; path: string }[]) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",

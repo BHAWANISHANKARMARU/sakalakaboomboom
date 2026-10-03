@@ -34,6 +34,7 @@ for (const width of [320, 375, 390, 414, 768, 1024, 1280, 1440]) {
   test(`routes have no console errors or overflow at ${width}px`, async ({
     page,
   }) => {
+    test.setTimeout(120_000);
     const errors: string[] = [];
     page.on("console", (message) => {
       if (message.type() === "error") errors.push(message.text());
@@ -42,12 +43,21 @@ for (const width of [320, 375, 390, 414, 768, 1024, 1280, 1440]) {
     for (const route of routes) {
       await page.goto(route);
       await expect(page.locator("h1")).toHaveCount(1);
+      const overflow = await page.evaluate(() => ({
+        fits:
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
+        elements: [...document.querySelectorAll<HTMLElement>("body *")]
+          .filter((element) => {
+            const rect = element.getBoundingClientRect();
+            return rect.right > document.documentElement.clientWidth + 1;
+          })
+          .slice(0, 5)
+          .map((element) => `${element.tagName}.${element.className}`),
+      }));
       expect(
-        await page.evaluate(
-          () =>
-            document.documentElement.scrollWidth <=
-            document.documentElement.clientWidth,
-        ),
+        overflow.fits,
+        `${route} must not overflow at ${width}px: ${overflow.elements.join(", ")}`,
       ).toBe(true);
     }
     expect(errors).toEqual([]);
