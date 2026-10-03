@@ -8,6 +8,16 @@ export type SearchRecord = {
   terms: string;
 };
 export function buildSearchIndex(): SearchRecord[] {
+  const educationRecords = [
+    ...getEducationSearchRecords("en"),
+    ...getEducationSearchRecords("hi"),
+  ].map((record) => ({
+    title: record.title,
+    description: record.description,
+    category: record.category,
+    url: record.url,
+    terms: record.terms,
+  }));
   return [
     ...getLiveTools("en").map((tool) => ({
       title: tool.title,
@@ -24,12 +34,6 @@ export function buildSearchIndex(): SearchRecord[] {
       terms:
         `${article.title} ${article.description} ${article.section}`.toLowerCase(),
     })),
-    ...getEducationSearchRecords("en").map((record) => ({
-      title: record.title,
-      description: record.description,
-      category: record.category,
-      url: record.url,
-      terms: record.terms,
-    })),
+    ...educationRecords,
   ];
 }

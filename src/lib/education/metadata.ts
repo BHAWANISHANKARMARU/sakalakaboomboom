@@ -8,10 +8,14 @@ import {
 } from "./repository";
 
 const prefix = (locale: Locale) => (locale === "hi" ? "/hi" : "");
-const localizedAlternates = (englishPath: string, hasHindi = true) => ({
-  en: englishPath,
+const localizedAlternates = (
+  englishPath: string,
+  hasEnglish = true,
+  hasHindi = true,
+) => ({
+  ...(hasEnglish ? { en: englishPath } : {}),
   ...(hasHindi ? { hi: `/hi${englishPath}` } : {}),
-  "x-default": englishPath,
+  "x-default": hasEnglish ? englishPath : `/hi${englishPath}`,
 });
 
 export const getEducationLandingMetadata = (locale: Locale) => {
@@ -92,6 +96,9 @@ export const getLessonMetadata = (
   );
   if (!result) return {};
   const path = `/education/${classSlug}/${subjectSlug}/${bookSlug}/${chapterSlug}`;
+  const hasEnglish = Boolean(
+    getPublishedLesson(classSlug, subjectSlug, bookSlug, chapterSlug, "en"),
+  );
   const hasHindi = Boolean(
     getPublishedLesson(classSlug, subjectSlug, bookSlug, chapterSlug, "hi"),
   );
@@ -99,6 +106,6 @@ export const getLessonMetadata = (
     title: result.lesson.title,
     description: result.lesson.description,
     path: `${prefix(locale)}${path}`,
-    languageAlternates: localizedAlternates(path, hasHindi),
+    languageAlternates: localizedAlternates(path, hasEnglish, hasHindi),
   });
 };
