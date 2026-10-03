@@ -988,6 +988,9 @@ a.home-tool-card:hover {
 .site-brand-footer {
   color: white;
 }
+.site-brand-footer > span:last-child span {
+  color: #72aaff;
+}
 .site-footer-about p {
   margin: 18px 0 0;
   font-size: 11px;

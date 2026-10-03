@@ -7,6 +7,13 @@ const routes = [
   "/contact",
   "/disclaimer",
   "/education",
+  "/education/class-9",
+  "/education/class-9/mathematics",
+  "/education/class-9/mathematics/mathematics-2026-27",
+  "/education/class-9/mathematics/mathematics-2026-27/number-system",
+  "/hi/education",
+  "/hi/education/class-9",
+  "/hi/education/class-9/mathematics/mathematics-2026-27/number-system",
   "/education/cbse",
   "/education/class-11",
   "/education/class-12",
@@ -177,4 +184,38 @@ test("new everyday tools render and calculate on mobile", async ({ page }) => {
   await expect(page.locator(".tool-output pre")).not.toHaveText(
     "Your result will appear here.",
   );
+});
+
+test("education lesson is bilingual, accessible and mobile-safe", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto(
+    "/education/class-9/mathematics/mathematics-2026-27/number-system",
+  );
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Number System Explained Simply",
+    }),
+  ).toBeVisible();
+  const hindiLink = page.getByRole("link", { name: "हिंदी में पढ़ें" });
+  await hindiLink.focus();
+  await expect(hindiLink).toBeFocused();
+  await hindiLink.click();
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "संख्या पद्धति आसान भाषा में",
+    }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth <=
+        document.documentElement.clientWidth,
+    ),
+  ).toBe(true);
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
 });

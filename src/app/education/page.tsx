@@ -32,7 +32,7 @@ export default function Page() {
         </ResponsiveGrid>
       </ContentSection>
       <StatusNotice
-        title="Current syllabus is source-checked"
+        title="Reviewed before publication"
         description="Published chapter guides are checked against official CBSE or NCERT sources. Lessons are original explanations, not copied textbooks."
       />
     </SectionIndex>
