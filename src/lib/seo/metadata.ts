@@ -6,12 +6,14 @@ export function buildPageMetadata({
   path,
   noIndex = false,
   languageAlternates,
+  absoluteTitle = false,
 }: {
   title: string;
   description: string;
   path: string;
   noIndex?: boolean;
   languageAlternates?: Record<string, string>;
+  absoluteTitle?: boolean;
 }): Metadata {
   const canonical = new URL(path, siteConfig.url).toString();
   const languages = languageAlternates
@@ -23,7 +25,7 @@ export function buildPageMetadata({
       )
     : undefined;
   return {
-    title: `${title} | ${siteConfig.name}`,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     alternates: { canonical, languages },
     openGraph: {

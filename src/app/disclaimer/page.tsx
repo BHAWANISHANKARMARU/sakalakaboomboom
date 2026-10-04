@@ -1,4 +1,6 @@
 import { DocumentLayout } from "@/components/layout/document-layout";
+import { getStaticPageMetadata } from "@/lib/seo/static-pages";
+export const metadata = getStaticPageMetadata("/disclaimer");
 export default function Page() {
   return (
     <DocumentLayout

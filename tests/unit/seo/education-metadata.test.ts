@@ -33,4 +33,15 @@ describe("education SEO", () => {
     );
     expect(urls.some((url) => url.endsWith("/quadrilaterals"))).toBe(false);
   });
+
+  it("contains every indexable static page exactly once", async () => {
+    const { staticPagePaths } = await import("@/lib/seo/static-pages");
+    const urls = sitemap().map((item) => item.url);
+    expect(new Set(urls).size).toBe(urls.length);
+    for (const path of staticPagePaths) {
+      expect(urls).toContain(
+        new URL(path, "https://www.sakalakaboomboom.online/").toString(),
+      );
+    }
+  });
 });

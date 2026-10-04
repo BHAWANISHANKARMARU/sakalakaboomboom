@@ -2,33 +2,10 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
 import { getLiveTools, getPublishedArticles } from "@/lib/content/registry";
 import { getPublishedEducationSitemapRecords } from "@/lib/education/repository";
-const staticPaths = [
-  "/",
-  "/tools",
-  "/tools/pdf",
-  "/tools/image",
-  "/tools/text",
-  "/tools/web",
-  "/tools/scanner",
-  "/tools/calculators",
-  "/education",
-  "/education/class-11",
-  "/education/class-12",
-  "/education/ncert",
-  "/education/cbse",
-  "/exams",
-  "/technology",
-  "/how-to",
-  "/blog",
-  "/about",
-  "/contact",
-  "/privacy-policy",
-  "/terms",
-  "/disclaimer",
-];
+import { staticPagePaths } from "@/lib/seo/static-pages";
 export default function sitemap(): MetadataRoute.Sitemap {
   const basicRoutes = [
-    ...staticPaths,
+    ...staticPagePaths,
     ...getLiveTools("en").map((item) => item.url),
     ...getPublishedArticles("en").map(
       (item) => `/${item.section}/${item.slug}`,
@@ -45,5 +22,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: item.lastModified,
     changeFrequency: "monthly" as const,
   }));
-  return [...basicRoutes, ...educationRoutes];
+  return [
+    ...new Map(
+      [...basicRoutes, ...educationRoutes].map((item) => [item.url, item]),
+    ).values(),
+  ];
 }

@@ -219,3 +219,29 @@ test("education lesson is bilingual, accessible and mobile-safe", async ({
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test("every sitemap page declares itself as canonical", async ({ page }) => {
+  test.setTimeout(180_000);
+  const response = await page.request.get("/sitemap.xml");
+  expect(response.ok()).toBe(true);
+  const xml = await response.text();
+  const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+    (match) => match[1],
+  );
+  expect(new Set(urls).size).toBe(urls.length);
+
+  for (const url of urls) {
+    const pathname = new URL(url).pathname;
+    await page.goto(pathname);
+    const canonical = await page
+      .locator('link[rel="canonical"]')
+      .getAttribute("href");
+    expect(
+      canonical ? new URL(canonical).toString() : canonical,
+      `${pathname} must self-canonicalize`,
+    ).toBe(new URL(url).toString());
+    await expect(page).not.toHaveTitle(
+      /\| Sakalakaboomboom \| Sakalakaboomboom$/,
+    );
+  }
+});

@@ -11,10 +11,19 @@ describe("metadata", () => {
     expect(value.alternates?.canonical).toBe(
       "https://www.sakalakaboomboom.online/tools",
     );
-    expect(value.title).toBe("Online tools | Sakalakaboomboom");
+    expect(value.title).toBe("Online tools");
+  });
+
+  it("does not make child pages inherit the homepage canonical", async () => {
+    const [{ metadata: layoutMetadata }, { metadata: homeMetadata }] =
+      await Promise.all([import("@/app/layout"), import("@/app/page")]);
+    expect(layoutMetadata.alternates?.canonical).toBeUndefined();
+    expect(homeMetadata.alternates?.canonical).toBe(
+      "https://www.sakalakaboomboom.online/",
+    );
   });
   it("gives the root page a canonical and Open Graph URL", async () => {
-    const { metadata } = await import("@/app/layout");
+    const { metadata } = await import("@/app/page");
     expect(metadata.alternates?.canonical).toBe(
       "https://www.sakalakaboomboom.online/",
     );
@@ -22,8 +31,8 @@ describe("metadata", () => {
       url: "https://www.sakalakaboomboom.online/",
       siteName: "Sakalakaboomboom",
     });
-    expect(metadata.title).toMatchObject({
-      default:
+    expect(metadata.title).toEqual({
+      absolute:
         "Sakalakaboomboom — Free Online Tools & Study Resources for India",
     });
   });

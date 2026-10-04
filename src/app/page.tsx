@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
+import { getStaticPageMetadata } from "@/lib/seo/static-pages";
+export const metadata = getStaticPageMetadata("/");
 
 type ToolCard = {
   title: string;

@@ -1,6 +1,8 @@
 import { SectionIndex } from "@/components/layout/section-index";
 import { CategoryCard } from "@/components/ui/category-card";
 import { categories } from "@/content/categories";
+import { getStaticPageMetadata } from "@/lib/seo/static-pages";
+export const metadata = getStaticPageMetadata("/tools");
 export default function Page() {
   return (
     <SectionIndex

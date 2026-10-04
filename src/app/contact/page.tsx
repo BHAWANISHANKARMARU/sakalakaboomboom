@@ -1,5 +1,7 @@
 import { DocumentLayout } from "@/components/layout/document-layout";
 import { siteConfig } from "@/config/site";
+import { getStaticPageMetadata } from "@/lib/seo/static-pages";
+export const metadata = getStaticPageMetadata("/contact");
 export default function Page() {
   return (
     <DocumentLayout
