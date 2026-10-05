@@ -11,6 +11,7 @@ export function ToolLayout({
   path,
   children,
   details,
+  processing = "browser",
 }: {
   title: string;
   description: string;
@@ -18,6 +19,7 @@ export function ToolLayout({
   path: string;
   children: ReactNode;
   details?: ReactNode;
+  processing?: "browser" | "server";
 }) {
   const categoryPath = `/tools/${category.toLowerCase()}`;
   return (
@@ -49,8 +51,16 @@ export function ToolLayout({
           ]}
         />
         <StatusNotice
-          title="Private browser processing"
-          description="This tool processes your input on this device. Your files or text are not uploaded to our server."
+          title={
+            processing === "browser"
+              ? "Private browser processing"
+              : "Server audio conversion"
+          }
+          description={
+            processing === "browser"
+              ? "This tool processes your input on this device. Your files or text are not uploaded to our server."
+              : "Your video link is sent to the conversion server, which downloads and converts the audio. Temporary files are deleted after processing."
+          }
           tone="privacy"
         />
         <section className="tool-workspace" aria-label={`${title} interface`}>
@@ -61,7 +71,10 @@ export function ToolLayout({
           {details ?? (
             <p>
               Add your input, review the options, then create and download the
-              result. Your content stays on this device.
+              result.{" "}
+              {processing === "browser"
+                ? "Your content stays on this device."
+                : "Audio is processed on the conversion server."}
             </p>
           )}
         </section>

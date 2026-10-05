@@ -10,11 +10,11 @@ import {
 
 describe("content registry", () => {
   it("contains the expanded unique tool roadmap and six categories", () => {
-    expect(tools).toHaveLength(37);
-    expect(new Set(tools.map((tool) => tool.id)).size).toBe(37);
+    expect(tools).toHaveLength(38);
+    expect(new Set(tools.map((tool) => tool.id)).size).toBe(tools.length);
     expect(
       new Set(tools.map((tool) => `${tool.category}/${tool.slug}`)).size,
-    ).toBe(37);
+    ).toBe(tools.length);
     expect(categories).toHaveLength(6);
   });
 

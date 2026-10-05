@@ -5,3 +5,4 @@ test-results
 coverage
 package-lock.json
 docs/superpowers
+.venv-audio

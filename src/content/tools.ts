@@ -20,6 +20,16 @@ const tool = (
 
 export const tools: ToolRecord[] = [
   tool(
+    "youtube-video-to-audio",
+    "web",
+    "youtube-video-to-audio",
+    "YouTube Video to Audio",
+    "Convert a YouTube video to a downloadable MP3 audio file.",
+    process.env.NODE_ENV === "development" && !process.env.VERCEL
+      ? "published"
+      : "draft",
+  ),
+  tool(
     "pdf-compressor",
     "pdf",
     "pdf-compressor",
