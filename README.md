@@ -59,8 +59,10 @@ failure or cancellation. Only canonical YouTube video URLs are passed to yt-dlp.
 Temporary folders have the prefix `sakalaka-audio-`; after a hard process/OS crash,
 an interrupted folder may remain in the system temporary directory.
 
-This is a **local prototype**. The page is not indexed or listed in production,
-and the API is disabled outside development and on Vercel. A public deployment
+The **conversion service is a local prototype**. Its public information page is
+indexable and linked from the homepage, tools directory, web category and sitemap.
+Production visitors see an availability notice instead of a nonworking form;
+the API is disabled outside development and on Vercel. A public conversion deployment
 needs a separate conversion worker, durable job/download handling, and shared
 rate limits; it must not just enable subprocess conversions in a Vercel function.
 Update the server-processing privacy disclosure when making it public.

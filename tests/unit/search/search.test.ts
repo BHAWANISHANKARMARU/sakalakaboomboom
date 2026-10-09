@@ -4,8 +4,11 @@ import { searchIndex } from "@/lib/search/rank-results";
 describe("search", () => {
   it("indexes only published tools and ranks exact titles first", () => {
     const index = buildSearchIndex();
-    expect(index).toHaveLength(29);
+    expect(index).toHaveLength(30);
     expect(searchIndex("word counter", index)[0]?.title).toBe("Word Counter");
+    expect(searchIndex("youtube to mp3", index)[0]?.url).toBe(
+      "/tools/web/youtube-video-to-audio",
+    );
     expect(index.some((item) => item.title === "PDF Compressor")).toBe(false);
     expect(
       index.some((item) => item.title === "Number System Explained Simply"),

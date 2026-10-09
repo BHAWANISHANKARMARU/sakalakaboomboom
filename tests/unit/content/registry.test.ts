@@ -18,8 +18,8 @@ describe("content registry", () => {
     expect(categories).toHaveLength(6);
   });
 
-  it("publishes the five foundation tools and twenty everyday tools", () => {
-    expect(getLiveTools("en")).toHaveLength(25);
+  it("publishes the foundation tools, everyday tools and YouTube audio page", () => {
+    expect(getLiveTools("en")).toHaveLength(26);
     expect(getToolBySlug("pdf", "pdf-compressor", "en")).toBeUndefined();
     expect(getToolBySlug("pdf", "pdf-merger", "hi")?.title).toBe("PDF Merger");
   });

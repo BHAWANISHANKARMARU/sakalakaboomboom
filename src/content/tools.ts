@@ -23,11 +23,9 @@ export const tools: ToolRecord[] = [
     "youtube-video-to-audio",
     "web",
     "youtube-video-to-audio",
-    "YouTube Video to Audio",
-    "Convert a YouTube video to a downloadable MP3 audio file.",
-    process.env.NODE_ENV === "development" && !process.env.VERCEL
-      ? "published"
-      : "draft",
+    "YouTube to MP3 – Video to Audio",
+    "Explore YouTube audio downloads and our MP3 converter preview. Online conversion coming soon.",
+    "published",
   ),
   tool(
     "pdf-compressor",

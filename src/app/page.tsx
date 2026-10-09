@@ -13,6 +13,13 @@ type ToolCard = {
 
 const popularTools: ToolCard[] = [
   {
+    title: "YouTube to MP3",
+    description: "Video-to-audio guide · online conversion coming soon",
+    icon: "MP3",
+    tone: "red",
+    href: "/tools/web/youtube-video-to-audio",
+  },
+  {
     title: "PDF Compressor",
     description: "Reduce PDF file size while keeping quality",
     icon: "PDF",
