@@ -81,3 +81,15 @@ successfully. The local production build downloaded a valid MP3, but the same
 video on Vercel returned YouTube playback-verification rejection. Public
 conversion is therefore not verified working; changing UI or adding another
 Next route does not resolve this provider access restriction.
+
+The playback-token provider was also tested on Vercel: diagnostics confirmed
+`tokenReceived: true`, with no provider/runtime failure, but YouTube still
+required playback verification in both `iad1` and `bom1`. The region experiment
+was reverted. No working public-download claim is made from these tests.
+
+An optional **server-only** `YOUTUBE_PROXY_URL` can route yt-dlp and its token
+provider through an operator-supplied HTTP(S) or SOCKS5 proxy. Set it in Vercel's
+production environment and redeploy; never use a `NEXT_PUBLIC_` variable or put
+credentials in source control. No proxy is included, purchased or automatically
+selected. It must be tested from production before treating downloads as working.
+Without this variable the route continues to use a direct connection.

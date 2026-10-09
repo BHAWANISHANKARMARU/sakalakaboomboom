@@ -156,6 +156,7 @@ export function createAudioConverter(
     python?: string;
     ffmpeg?: string;
     executable?: string;
+    proxy?: string;
   } = {},
 ) {
   const run = options.run ?? runCommand;
@@ -182,6 +183,25 @@ export function createAudioConverter(
     const totalTimer = setTimeout(abort, 180_000);
     let tooLarge = false;
     try {
+      // Only deployment configuration can choose the proxy; never browser input.
+      const proxy = options.proxy ?? process.env.YOUTUBE_PROXY_URL;
+      if (proxy) {
+        try {
+          const parsed = new URL(proxy);
+          if (
+            !["http:", "https:", "socks5:", "socks5h:"].includes(
+              parsed.protocol,
+            ) ||
+            !parsed.hostname
+          )
+            throw new Error();
+        } catch {
+          throw new AudioError(
+            "The audio service connection is not configured correctly.",
+            503,
+          );
+        }
+      }
       const python =
         options.python ?? join(process.cwd(), ".venv-audio", "bin", "python");
       const executable =
@@ -222,6 +242,7 @@ export function createAudioConverter(
       }, 500);
       const common = [
         ...(executable ? [] : ["-m", "yt_dlp"]),
+        ...(proxy ? ["--proxy", proxy] : []),
         "--ignore-config",
         "--no-plugin-dirs",
         "--plugin-dirs",

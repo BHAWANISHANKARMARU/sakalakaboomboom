@@ -10,46 +10,69 @@ import {
 const url = "https://youtu.be/BaW_jenozKc";
 
 describe("local audio conversion", () => {
-  it("runs metadata, download and MP3 conversion in order and removes temporary files", async () => {
-    const steps: string[] = [];
-    const files: string[] = [];
-    const run: CommandRunner = async (command, args) => {
-      if (args.includes("--dump-single-json")) {
-        steps.push("metadata");
-        expect(args).toContain("--plugin-dirs");
-        expect(args).toContain("youtube:player_client=mweb;fetch_pot=always");
-        return JSON.stringify({
-          duration: 10,
-          is_live: false,
-          title: "Example",
-        });
-      }
-      if (command === "python") {
-        steps.push("download");
-        expect(args.at(-1)).toBe("https://www.youtube.com/watch?v=BaW_jenozKc");
-        expect(args).toContain("--no-playlist");
-        const path = args[args.indexOf("-o") + 1];
-        files.push(path);
-        await writeFile(path, "source");
-      } else {
-        steps.push("mp3");
-        expect(args).toContain("libmp3lame");
-        const path = args.at(-1)!;
-        files.push(path);
-        await writeFile(path, "ID3-test-audio");
-      }
-      return "";
-    };
+  it.each([undefined, "http://test-user:test-pass@proxy.example:8080"])(
+    "runs conversion and cleanup with server-configured proxy %s",
+    async (proxy) => {
+      const steps: string[] = [];
+      const files: string[] = [];
+      const run: CommandRunner = async (command, args) => {
+        if (command === "python") {
+          if (proxy) expect(args[args.indexOf("--proxy") + 1]).toBe(proxy);
+          else expect(args).not.toContain("--proxy");
+        }
+        if (args.includes("--dump-single-json")) {
+          steps.push("metadata");
+          expect(args).toContain("--plugin-dirs");
+          expect(args).toContain("youtube:player_client=mweb;fetch_pot=always");
+          return JSON.stringify({
+            duration: 10,
+            is_live: false,
+            title: "Example",
+          });
+        }
+        if (command === "python") {
+          steps.push("download");
+          expect(args.at(-1)).toBe(
+            "https://www.youtube.com/watch?v=BaW_jenozKc",
+          );
+          expect(args).toContain("--no-playlist");
+          const path = args[args.indexOf("-o") + 1];
+          files.push(path);
+          await writeFile(path, "source");
+        } else {
+          steps.push("mp3");
+          expect(args).toContain("libmp3lame");
+          const path = args.at(-1)!;
+          files.push(path);
+          await writeFile(path, "ID3-test-audio");
+        }
+        return "";
+      };
+      const convert = createAudioConverter({
+        run,
+        proxy,
+        python: "python",
+        ffmpeg: "ffmpeg",
+      });
+      const result = await convert(url);
+      expect(steps).toEqual(["metadata", "download", "mp3"]);
+      expect(result.audio.toString()).toBe("ID3-test-audio");
+      expect(result.filename).toBe("youtube-BaW_jenozKc.mp3");
+      for (const path of files) await expect(access(path)).rejects.toThrow();
+    },
+  );
+
+  it("rejects invalid server proxy configuration before starting any commands", async () => {
+    let calls = 0;
     const convert = createAudioConverter({
-      run,
-      python: "python",
-      ffmpeg: "ffmpeg",
+      proxy: "file:///private/proxy",
+      run: async () => {
+        calls++;
+        return "";
+      },
     });
-    const result = await convert(url);
-    expect(steps).toEqual(["metadata", "download", "mp3"]);
-    expect(result.audio.toString()).toBe("ID3-test-audio");
-    expect(result.filename).toBe("youtube-BaW_jenozKc.mp3");
-    for (const path of files) await expect(access(path)).rejects.toThrow();
+    await expect(convert(url)).rejects.toMatchObject({ status: 503 });
+    expect(calls).toBe(0);
   });
 
   it.each([100, 4_000_001])(
