@@ -5,9 +5,13 @@ import { siteConfig } from "@/config/site";
 export const runtime = "nodejs";
 export const maxDuration = 240;
 
-function failure(error: string, status: number) {
+function failure(
+  error: string,
+  status: number,
+  diagnostic?: AudioError["diagnostic"],
+) {
   return Response.json(
-    { error },
+    { error, ...(diagnostic ? { diagnostic } : {}) },
     { status, headers: { "Cache-Control": "no-store" } },
   );
 }
@@ -89,6 +93,7 @@ export async function POST(request: Request) {
         ? error.message
         : "Conversion failed. Please try again.",
       error instanceof AudioError ? error.status : 500,
+      error instanceof AudioError ? error.diagnostic : undefined,
     );
   }
 }

@@ -177,6 +177,21 @@ describe("local audio conversion", () => {
     },
   );
 
+  it("retains safe token diagnostics without returning provider logs or tokens", async () => {
+    const log =
+      "Generating a player PO Token\nRetrieved a player PO Token for mweb client\nSign in to confirm you are not a bot. secret-token-value";
+    const failure = await runCommand(process.execPath, [
+      "-e",
+      "process.stderr.write(process.argv[1]);process.exit(1)",
+      log,
+    ]).catch((error) => error);
+    expect(failure.diagnostic).toMatchObject({
+      tokenRequested: true,
+      tokenReceived: true,
+    });
+    expect(JSON.stringify(failure)).not.toContain("secret-token-value");
+  });
+
   it("stops an aborted subprocess", async () => {
     const controller = new AbortController();
     const result = runCommand(

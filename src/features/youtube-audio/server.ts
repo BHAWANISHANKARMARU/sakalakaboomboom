@@ -10,10 +10,18 @@ import {
   AUDIO_MAX_MINUTES,
 } from "./limits";
 
+type AudioDiagnostic = {
+  tokenRequested: boolean;
+  tokenReceived: boolean;
+  tokenFailed: boolean;
+  runtimeFailed: boolean;
+};
+
 export class AudioError extends Error {
   constructor(
     message: string,
     public status: number,
+    public diagnostic?: AudioDiagnostic,
   ) {
     super(message);
   }
@@ -54,6 +62,12 @@ export const runCommand: CommandRunner = (
     });
     let stdout = "";
     let stderr = "";
+    const diagnostic: AudioDiagnostic = {
+      tokenRequested: false,
+      tokenReceived: false,
+      tokenFailed: false,
+      runtimeFailed: false,
+    };
     let stopped: Error | undefined;
     const stop = (error: Error) => {
       stopped = error;
@@ -86,6 +100,16 @@ export const runCommand: CommandRunner = (
     });
     child.stderr.on("data", (chunk: Buffer) => {
       stderr = (stderr + chunk.toString()).slice(-8000);
+      diagnostic.tokenRequested ||= /Generating a player PO Token/.test(stderr);
+      diagnostic.tokenReceived ||= /Retrieved a player PO Token/.test(stderr);
+      diagnostic.tokenFailed ||=
+        /Failed.*(?:POT|PO Token|script)|_get_pot_via_script failed|Timeout expired/i.test(
+          stderr,
+        );
+      diagnostic.runtimeFailed ||=
+        /error loading python|shared object file|exec format|permission denied|GLIBC_|ERR_DLOPEN_FAILED|ERR_MODULE_NOT_FOUND|Cannot find module/i.test(
+          stderr,
+        );
     });
     child.on("error", () => {
       cleanup();
@@ -105,6 +129,7 @@ export const runCommand: CommandRunner = (
             new AudioError(
               "YouTube is requiring playback verification from our server, so this video cannot be converted right now.",
               502,
+              diagnostic,
             ),
           );
         } else if (
@@ -208,6 +233,7 @@ export function createAudioConverter(
         "--no-playlist",
         "--no-cache-dir",
         "--no-progress",
+        "--verbose",
         "--js-runtimes",
         `node:${process.execPath}`,
         "--socket-timeout",
