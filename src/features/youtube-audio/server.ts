@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { createStderrDiagnostics } from "./diagnostics";
 import { spawn } from "node:child_process";
 import { mkdir, mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -10,11 +12,12 @@ import {
   AUDIO_MAX_MINUTES,
 } from "./limits";
 
-type AudioDiagnostic = {
-  tokenRequested: boolean;
-  tokenReceived: boolean;
-  tokenFailed: boolean;
-  runtimeFailed: boolean;
+type AudioDiagnostic = ReturnType<
+  ReturnType<typeof createStderrDiagnostics>["finish"]
+>;
+type CommandContext = {
+  requestId: string;
+  stage: "metadata" | "download" | "encode";
 };
 
 export class AudioError extends Error {
@@ -32,6 +35,7 @@ export type CommandRunner = (
   args: string[],
   signal?: AbortSignal,
   temporaryDirectory?: string,
+  context?: CommandContext,
 ) => Promise<string>;
 
 // No shell interpolation. Kill the process group so cancellation also stops children.
@@ -40,34 +44,37 @@ export const runCommand: CommandRunner = (
   args,
   signal,
   temporaryDirectory,
+  context,
 ) =>
   new Promise((resolve, reject) => {
     if (signal?.aborted) {
       reject(new AudioError("Conversion cancelled.", 499));
       return;
     }
+    const childEnvironment = { ...process.env };
+    // Both yt-dlp and bgutil otherwise independently inherit proxy settings.
+    // Explicit --proxy is the sole network configuration for both processes.
+    for (const key of Object.keys(childEnvironment)) {
+      if (/^(https?|all|no)_proxy$/i.test(key)) delete childEnvironment[key];
+    }
     const child = spawn(command, args, {
       shell: false,
       env: temporaryDirectory
         ? {
-            ...process.env,
+            ...childEnvironment,
             TMPDIR: temporaryDirectory,
             TMP: temporaryDirectory,
             TEMP: temporaryDirectory,
             XDG_CACHE_HOME: temporaryDirectory,
           }
-        : process.env,
+        : childEnvironment,
       detached: process.platform !== "win32",
       stdio: ["ignore", "pipe", "pipe"],
     });
     let stdout = "";
-    let stderr = "";
-    const diagnostic: AudioDiagnostic = {
-      tokenRequested: false,
-      tokenReceived: false,
-      tokenFailed: false,
-      runtimeFailed: false,
-    };
+    const capture = createStderrDiagnostics();
+    const started = Date.now();
+    let spawnFailed = false;
     let stopped: Error | undefined;
     const stop = (error: Error) => {
       stopped = error;
@@ -98,55 +105,103 @@ export const runCommand: CommandRunner = (
       if (stdout.length > 2_000_000)
         stop(new AudioError("Video information is too large to process.", 422));
     });
-    child.stderr.on("data", (chunk: Buffer) => {
-      stderr = (stderr + chunk.toString()).slice(-8000);
-      diagnostic.tokenRequested ||= /Generating a player PO Token/.test(stderr);
-      diagnostic.tokenReceived ||= /Retrieved a player PO Token/.test(stderr);
-      diagnostic.tokenFailed ||=
-        /Failed.*(?:POT|PO Token|script)|_get_pot_via_script failed|Timeout expired/i.test(
-          stderr,
-        );
-      diagnostic.runtimeFailed ||=
-        /error loading python|shared object file|exec format|permission denied|GLIBC_|ERR_DLOPEN_FAILED|ERR_MODULE_NOT_FOUND|Cannot find module/i.test(
-          stderr,
-        );
-    });
+    child.stderr.on("data", (chunk: Buffer) => capture.feed(chunk.toString()));
     child.on("error", () => {
-      cleanup();
-      reject(
-        new AudioError(
-          "The audio converter could not start. Please try again later.",
-          503,
-        ),
-      );
+      spawnFailed = true;
     });
-    child.on("close", (code) => {
+    child.on("close", (code, terminationSignal) => {
       cleanup();
-      if (stopped) reject(stopped);
-      else if (code !== 0) {
-        if (/sign in to confirm|not a bot|login_required/i.test(stderr)) {
-          reject(
-            new AudioError(
-              "YouTube is requiring playback verification from our server, so this video cannot be converted right now.",
-              502,
-              diagnostic,
-            ),
-          );
-        } else if (
-          /error loading python|shared object file|exec format|permission denied|GLIBC_/i.test(
-            stderr,
-          )
-        ) {
-          reject(
-            new AudioError(
-              "The audio converter could not start. Please try again later.",
-              503,
-            ),
-          );
-        } else {
-          reject(new Error(stderr || "Conversion process failed."));
-        }
-      } else resolve(stdout);
+      const diagnostic = capture.finish();
+      if (spawnFailed) diagnostic.failures.push("runtime_dependency");
+      // Only the allowlisted projection is logged. Never stdout, argv, environment
+      // values, raw Error objects or raw provider stderr.
+      console.info(
+        JSON.stringify({
+          event: "youtube_audio_process",
+          requestId: context?.requestId,
+          stage: context?.stage ?? "process",
+          exitCode: code,
+          terminationSignal,
+          elapsedMs: Date.now() - started,
+          runtime: {
+            node: process.version,
+            platform: process.platform,
+            arch: process.arch,
+          },
+          extraction:
+            context?.stage === "encode"
+              ? undefined
+              : {
+                  client: "mweb",
+                  fetchPot: "always",
+                  cookies: false,
+                  network:
+                    args.includes("--proxy") &&
+                    args[args.indexOf("--proxy") + 1]
+                      ? "configured_proxy"
+                      : "direct",
+                },
+          ...diagnostic,
+        }),
+      );
+      if (stopped) {
+        reject(stopped);
+        return;
+      }
+      if (code === 0 && !spawnFailed) {
+        resolve(stdout);
+        return;
+      }
+      const causes = diagnostic.failures;
+      if (causes.includes("runtime_dependency")) {
+        reject(
+          new AudioError(
+            "The audio converter could not start. Please try again later.",
+            503,
+            diagnostic,
+          ),
+        );
+      } else if (causes.includes("playback_verification")) {
+        reject(
+          new AudioError(
+            "YouTube is requiring playback verification from our server, so this video cannot be converted right now.",
+            502,
+            diagnostic,
+          ),
+        );
+      } else if (causes.includes("po_token_provider")) {
+        reject(
+          new AudioError(
+            "Playback verification could not be prepared. Please try again later.",
+            502,
+            diagnostic,
+          ),
+        );
+      } else if (causes.includes("http_403")) {
+        reject(
+          new AudioError(
+            "YouTube refused access to this video's media.",
+            502,
+            diagnostic,
+          ),
+        );
+      } else if (causes.includes("missing_formats")) {
+        reject(
+          new AudioError(
+            "No downloadable audio format is available for this video.",
+            422,
+            diagnostic,
+          ),
+        );
+      } else {
+        reject(
+          new AudioError(
+            "Audio processing failed. Please try again later.",
+            502,
+            diagnostic,
+          ),
+        );
+      }
     });
   });
 
@@ -161,7 +216,11 @@ export function createAudioConverter(
 ) {
   const run = options.run ?? runCommand;
   let busy = false;
-  return async (input: unknown, signal?: AbortSignal) => {
+  return async (
+    input: unknown,
+    signal?: AbortSignal,
+    requestId = randomUUID(),
+  ) => {
     let url: string;
     try {
       url = normalizeYoutubeUrl(input);
@@ -192,7 +251,11 @@ export function createAudioConverter(
             !["http:", "https:", "socks5:", "socks5h:"].includes(
               parsed.protocol,
             ) ||
-            !parsed.hostname
+            !parsed.hostname ||
+            (parsed.pathname !== "/" && parsed.pathname !== "") ||
+            !!parsed.search ||
+            !!parsed.hash ||
+            proxy !== proxy.trim()
           )
             throw new Error();
         } catch {
@@ -242,7 +305,8 @@ export function createAudioConverter(
       }, 500);
       const common = [
         ...(executable ? [] : ["-m", "yt_dlp"]),
-        ...(proxy ? ["--proxy", proxy] : []),
+        "--proxy",
+        proxy ?? "",
         "--ignore-config",
         "--no-plugin-dirs",
         "--plugin-dirs",
@@ -270,6 +334,7 @@ export function createAudioConverter(
           [...common, "--dump-single-json", "--skip-download", "--", url],
           controller.signal,
           runtimeDirectory,
+          { requestId, stage: "metadata" },
         ),
       );
       if (
@@ -309,6 +374,7 @@ export function createAudioConverter(
         ],
         controller.signal,
         runtimeDirectory,
+        { requestId, stage: "download" },
       );
       const sourceStat = await stat(source);
       if (!sourceStat.size || sourceStat.size > 40 * 1024 * 1024)
@@ -320,9 +386,9 @@ export function createAudioConverter(
         ffmpeg,
         [
           "-nostdin",
-          "-hide_banner",
+          "-nostats",
           "-loglevel",
-          "error",
+          "info",
           "-i",
           source,
           "-vn",
@@ -336,6 +402,7 @@ export function createAudioConverter(
         ],
         controller.signal,
         runtimeDirectory,
+        { requestId, stage: "encode" },
       );
       const outputStat = await stat(output);
       if (!outputStat.size || outputStat.size > AUDIO_MAX_OUTPUT_BYTES)

@@ -1,11 +1,16 @@
 // @vitest-environment node
 import { access, writeFile } from "node:fs/promises";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createAudioConverter,
   runCommand,
   type CommandRunner,
 } from "@/features/youtube-audio/server";
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.restoreAllMocks();
+});
 
 const url = "https://youtu.be/BaW_jenozKc";
 
@@ -18,7 +23,7 @@ describe("local audio conversion", () => {
       const run: CommandRunner = async (command, args) => {
         if (command === "python") {
           if (proxy) expect(args[args.indexOf("--proxy") + 1]).toBe(proxy);
-          else expect(args).not.toContain("--proxy");
+          else expect(args[args.indexOf("--proxy") + 1]).toBe("");
         }
         if (args.includes("--dump-single-json")) {
           steps.push("metadata");
@@ -62,10 +67,16 @@ describe("local audio conversion", () => {
     },
   );
 
-  it("rejects invalid server proxy configuration before starting any commands", async () => {
+  it.each([
+    "file:///private/proxy",
+    "http://host/path",
+    "http://host?token=secret",
+    "http://host#secret",
+    " http://host",
+  ])("rejects invalid server proxy configuration: %s", async (proxy) => {
     let calls = 0;
     const convert = createAudioConverter({
-      proxy: "file:///private/proxy",
+      proxy,
       run: async () => {
         calls++;
         return "";
@@ -73,6 +84,58 @@ describe("local audio conversion", () => {
     });
     await expect(convert(url)).rejects.toMatchObject({ status: 503 });
     expect(calls).toBe(0);
+  });
+
+  it("reads proxy configuration from the server environment at request time", async () => {
+    const calls: string[][] = [];
+    const convert = createAudioConverter({
+      run: async (_, args) => {
+        calls.push(args);
+        throw new Error("stop after metadata");
+      },
+    });
+    vi.stubEnv(
+      "YOUTUBE_PROXY_URL",
+      "socks5h://test-user:test-password@proxy.example:1080",
+    );
+    await expect(convert(url)).rejects.toMatchObject({ status: 502 });
+    expect(calls[0][calls[0].indexOf("--proxy") + 1]).toBe(
+      process.env.YOUTUBE_PROXY_URL,
+    );
+    vi.stubEnv("YOUTUBE_PROXY_URL", "");
+    vi.stubEnv("HTTPS_PROXY", "http://ambient.example:8080");
+    await expect(convert(url)).rejects.toMatchObject({ status: 502 });
+    expect(calls[1][calls[1].indexOf("--proxy") + 1]).toBe("");
+  });
+
+  it("prevents token subprocesses from inheriting ambient proxy settings", async () => {
+    for (const key of [
+      "HTTP_PROXY",
+      "HTTPS_PROXY",
+      "ALL_PROXY",
+      "NO_PROXY",
+      "http_proxy",
+      "https_proxy",
+      "all_proxy",
+      "no_proxy",
+    ])
+      vi.stubEnv(key, "secret-ambient-proxy");
+    const output = await runCommand(process.execPath, [
+      "-e",
+      "process.stdout.write(JSON.stringify(Object.keys(process.env).filter(k => /^(https?|all|no)_proxy$/i.test(k))))",
+    ]);
+    expect(JSON.parse(output)).toEqual([]);
+  });
+
+  it("logs a safe exit code and fails closed when the executable is missing", async () => {
+    const log = vi.spyOn(console, "info").mockImplementation(() => {});
+    await expect(
+      runCommand("/nonexistent/secret-executable", []),
+    ).rejects.toMatchObject({ status: 503 });
+    const record = JSON.parse(log.mock.calls[0][0]);
+    expect(record.failures).toContain("runtime_dependency");
+    expect(record.exitCode).not.toBe(0);
+    expect(JSON.stringify(record)).not.toContain("secret-executable");
   });
 
   it.each([100, 4_000_001])(
@@ -202,15 +265,15 @@ describe("local audio conversion", () => {
 
   it("retains safe token diagnostics without returning provider logs or tokens", async () => {
     const log =
-      "Generating a player PO Token\nRetrieved a player PO Token for mweb client\nSign in to confirm you are not a bot. secret-token-value";
+      "Generating a player PO Token for mweb client\nRetrieved a player PO Token for mweb client\nSign in to confirm you are not a bot. secret-token-value";
     const failure = await runCommand(process.execPath, [
       "-e",
       "process.stderr.write(process.argv[1]);process.exit(1)",
       log,
     ]).catch((error) => error);
-    expect(failure.diagnostic).toMatchObject({
-      tokenRequested: true,
-      tokenReceived: true,
+    expect(failure.diagnostic.tokens.player).toMatchObject({
+      requested: true,
+      received: true,
     });
     expect(JSON.stringify(failure)).not.toContain("secret-token-value");
   });

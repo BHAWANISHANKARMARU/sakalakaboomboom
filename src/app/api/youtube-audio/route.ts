@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { AudioError, convertAudio } from "@/features/youtube-audio/server";
 import { normalizeYoutubeUrl } from "@/features/youtube-audio/validate";
 import { siteConfig } from "@/config/site";
@@ -5,13 +6,9 @@ import { siteConfig } from "@/config/site";
 export const runtime = "nodejs";
 export const maxDuration = 240;
 
-function failure(
-  error: string,
-  status: number,
-  diagnostic?: AudioError["diagnostic"],
-) {
+function failure(error: string, status: number, requestId?: string) {
   return Response.json(
-    { error, ...(diagnostic ? { diagnostic } : {}) },
+    { error, ...(requestId ? { requestId } : {}) },
     { status, headers: { "Cache-Control": "no-store" } },
   );
 }
@@ -77,14 +74,16 @@ export async function POST(request: Request) {
   } catch {
     return failure("Paste a valid YouTube video link.", 400);
   }
+  const requestId = randomUUID();
   try {
-    const result = await convertAudio(input, request.signal);
+    const result = await convertAudio(input, request.signal, requestId);
     return new Response(new Uint8Array(result.audio), {
       headers: {
         "Content-Type": "audio/mpeg",
         "Content-Disposition": `attachment; filename="${result.filename}"`,
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",
+        "X-Request-ID": requestId,
       },
     });
   } catch (error) {
@@ -93,7 +92,7 @@ export async function POST(request: Request) {
         ? error.message
         : "Conversion failed. Please try again.",
       error instanceof AudioError ? error.status : 500,
-      error instanceof AudioError ? error.diagnostic : undefined,
+      requestId,
     );
   }
 }
