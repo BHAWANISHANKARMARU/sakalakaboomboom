@@ -98,9 +98,29 @@ export const runCommand: CommandRunner = (
     child.on("close", (code) => {
       cleanup();
       if (stopped) reject(stopped);
-      else if (code !== 0)
-        reject(new Error(stderr || "Conversion process failed."));
-      else resolve(stdout);
+      else if (code !== 0) {
+        if (/sign in to confirm|not a bot|login_required/i.test(stderr)) {
+          reject(
+            new AudioError(
+              "YouTube is requiring playback verification from our server, so this video cannot be converted right now.",
+              502,
+            ),
+          );
+        } else if (
+          /error loading python|shared object file|exec format|permission denied|GLIBC_/i.test(
+            stderr,
+          )
+        ) {
+          reject(
+            new AudioError(
+              "The audio converter could not start. Please try again later.",
+              503,
+            ),
+          );
+        } else {
+          reject(new Error(stderr || "Conversion process failed."));
+        }
+      } else resolve(stdout);
     });
   });
 

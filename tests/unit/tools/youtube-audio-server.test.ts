@@ -148,6 +148,30 @@ describe("local audio conversion", () => {
     ).toBe("/tmp/owned-audio-runtime");
   });
 
+  it.each([
+    [
+      "Sign in to confirm you’re not a bot. Use cookies",
+      502,
+      /playback verification/,
+    ],
+    [
+      "Error loading Python lib: libpython3.so: cannot open shared object file",
+      503,
+      /could not start/,
+    ],
+  ])(
+    "classifies provider and runtime failures without exposing raw logs",
+    async (stderr, status, message) => {
+      await expect(
+        runCommand(process.execPath, [
+          "-e",
+          "process.stderr.write(process.argv[1]);process.exit(1)",
+          stderr,
+        ]),
+      ).rejects.toMatchObject({ status, message });
+    },
+  );
+
   it("stops an aborted subprocess", async () => {
     const controller = new AbortController();
     const result = runCommand(
