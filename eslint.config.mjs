@@ -10,6 +10,7 @@ const eslintConfig = defineConfig([
     // Default ignores of eslint-config-next:
     ".next/**",
     ".venv-audio/**",
+    ".audio-bin/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

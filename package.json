@@ -7,9 +7,9 @@
     "node": ">=22"
   },
   "scripts": {
-    "prebuild": "node scripts/prepare-audio.mjs",
-    "audio:prepare": "node scripts/prepare-audio.mjs",
-    "audio:setup": "python3 -m venv .venv-audio && .venv-audio/bin/python -m pip install -r scripts/audio-requirements.txt",
+    "prebuild": "npm run audio:prepare",
+    "audio:prepare": "node scripts/prepare-audio.mjs && node scripts/prepare-audio-token.mjs",
+    "audio:setup": "python3 -m venv .venv-audio && .venv-audio/bin/python -m pip install -r scripts/audio-requirements.txt && npm run audio:prepare",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

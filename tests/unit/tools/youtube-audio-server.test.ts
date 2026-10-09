@@ -16,6 +16,8 @@ describe("local audio conversion", () => {
     const run: CommandRunner = async (command, args) => {
       if (args.includes("--dump-single-json")) {
         steps.push("metadata");
+        expect(args).toContain("--plugin-dirs");
+        expect(args).toContain("youtube:player_client=mweb;fetch_pot=always");
         return JSON.stringify({
           duration: 10,
           is_live: false,
@@ -141,11 +143,14 @@ describe("local audio conversion", () => {
     expect(
       await runCommand(
         process.execPath,
-        ["-e", "process.stdout.write(process.env.TMPDIR)"],
+        [
+          "-e",
+          "process.stdout.write(process.env.TMPDIR + '|' + process.env.XDG_CACHE_HOME)",
+        ],
         undefined,
         "/tmp/owned-audio-runtime",
       ),
-    ).toBe("/tmp/owned-audio-runtime");
+    ).toBe("/tmp/owned-audio-runtime|/tmp/owned-audio-runtime");
   });
 
   it.each([

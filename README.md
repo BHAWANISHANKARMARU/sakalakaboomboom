@@ -51,7 +51,13 @@ npm run dev -- --hostname 127.0.0.1
 
 Linux builds run `scripts/prepare-audio.mjs` through `npm run build` to download
 checksum-verified yt-dlp 2026.08.19, including its Python runtime. FFmpeg is
-provided by `ffmpeg-static`. Next output tracing includes both executables in
+provided by `ffmpeg-static`. Build preparation also installs the pinned
+BgUtils 2.0.2 playback-token provider (commit
+`26475e9d3665b972c4aeb83b4dbaafcf64b88438`) and its locked dependencies.
+yt-dlp uses its on-demand Node script with the mobile-web client and requests
+player/media tokens; token caches stay inside each request’s temporary directory.
+No additional HTTP server or account cookies are used.
+Next output tracing includes these runtime dependencies and both executables in
 the API function and excludes the local Python environment. Use `npm run build`,
 not a direct `next build`, so the build preparation runs.
 
