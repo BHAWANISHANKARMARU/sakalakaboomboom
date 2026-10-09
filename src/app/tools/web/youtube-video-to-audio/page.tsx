@@ -44,10 +44,12 @@ export default function Page() {
             supported.
           </p>
           <h2>Frequently asked questions</h2>
-          <h3>Can I convert a YouTube video online here now?</h3>
+          <h3>How do I convert a video?</h3>
           <p>
-            Yes. Paste a supported video link into the tool above, select
-            Convert to MP3, then Download MP3 when processing finishes.
+            Paste a supported video link into the tool above, select Convert to
+            MP3, then Download MP3 when processing finishes. YouTube may require
+            playback verification and prevent conversion. If that happens, the
+            tool displays an error.
           </p>
           <h3>Does this tool download MP4 videos?</h3>
           <p>

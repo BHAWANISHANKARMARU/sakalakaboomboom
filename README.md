@@ -69,3 +69,9 @@ YouTube may refuse hosting-provider IPs or require playback verification.
 Such failures return a visible error; this tool does not use personal cookies
 or bypass account restrictions. Retest actual downloads after each deployment.
 Only convert videos you own or have permission to download.
+
+Deployment check on 2026-10-09: the production page and function deployed
+successfully. The local production build downloaded a valid MP3, but the same
+video on Vercel returned YouTube playback-verification rejection. Public
+conversion is therefore not verified working; changing UI or adding another
+Next route does not resolve this provider access restriction.
