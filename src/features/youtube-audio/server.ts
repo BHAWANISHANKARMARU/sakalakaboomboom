@@ -1,8 +1,14 @@
 import { spawn } from "node:child_process";
-import { mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { normalizeYoutubeUrl } from "./validate";
+import ffmpegStatic from "ffmpeg-static";
+import {
+  AUDIO_MAX_SECONDS,
+  AUDIO_MAX_OUTPUT_BYTES,
+  AUDIO_MAX_MINUTES,
+} from "./limits";
 
 export class AudioError extends Error {
   constructor(
@@ -17,10 +23,16 @@ export type CommandRunner = (
   command: string,
   args: string[],
   signal?: AbortSignal,
+  temporaryDirectory?: string,
 ) => Promise<string>;
 
 // No shell interpolation. Kill the process group so cancellation also stops children.
-export const runCommand: CommandRunner = (command, args, signal) =>
+export const runCommand: CommandRunner = (
+  command,
+  args,
+  signal,
+  temporaryDirectory,
+) =>
   new Promise((resolve, reject) => {
     if (signal?.aborted) {
       reject(new AudioError("Conversion cancelled.", 499));
@@ -28,6 +40,14 @@ export const runCommand: CommandRunner = (command, args, signal) =>
     }
     const child = spawn(command, args, {
       shell: false,
+      env: temporaryDirectory
+        ? {
+            ...process.env,
+            TMPDIR: temporaryDirectory,
+            TMP: temporaryDirectory,
+            TEMP: temporaryDirectory,
+          }
+        : process.env,
       detached: process.platform !== "win32",
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -70,7 +90,7 @@ export const runCommand: CommandRunner = (command, args, signal) =>
       cleanup();
       reject(
         new AudioError(
-          "Audio conversion dependencies are unavailable. Run npm run audio:setup locally.",
+          "The audio converter could not start. Please try again later.",
           503,
         ),
       );
@@ -85,7 +105,12 @@ export const runCommand: CommandRunner = (command, args, signal) =>
   });
 
 export function createAudioConverter(
-  options: { run?: CommandRunner; python?: string; ffmpeg?: string } = {},
+  options: {
+    run?: CommandRunner;
+    python?: string;
+    ffmpeg?: string;
+    executable?: string;
+  } = {},
 ) {
   const run = options.run ?? runCommand;
   let busy = false;
@@ -113,25 +138,31 @@ export function createAudioConverter(
     try {
       const python =
         options.python ?? join(process.cwd(), ".venv-audio", "bin", "python");
-      const ffmpeg =
-        options.ffmpeg ??
-        (
-          await run(
-            python,
-            [
-              "-c",
-              "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())",
-            ],
-            controller.signal,
-          )
-        ).trim();
+      const executable =
+        options.executable ??
+        (!options.python && process.platform === "linux"
+          ? join(process.cwd(), ".audio-bin", "yt-dlp")
+          : undefined);
+      const command = executable ?? python;
+      const ffmpeg = options.ffmpeg ?? ffmpegStatic;
+      if (!ffmpeg)
+        throw new AudioError(
+          "Audio conversion is unavailable on this platform.",
+          503,
+        );
       directory = await mkdtemp(join(tmpdir(), "sakalaka-audio-"));
+      // PyInstaller extracts Python here. Owning this subtree lets finally clean
+      // it even when cancellation kills the bootloader before its own cleanup.
+      const runtimeDirectory = join(directory, "runtime");
+      await mkdir(runtimeDirectory);
       const workDirectory = directory;
       monitor = setInterval(() => {
         void readdir(workDirectory)
           .then(async (names) => {
             const sizes = await Promise.all(
-              names.map((name) => stat(join(workDirectory, name))),
+              names
+                .filter((name) => name !== "runtime")
+                .map((name) => stat(join(workDirectory, name))),
             );
             if (
               sizes.reduce((sum, item) => sum + item.size, 0) >
@@ -144,8 +175,7 @@ export function createAudioConverter(
           .catch(() => {});
       }, 500);
       const common = [
-        "-m",
-        "yt_dlp",
+        ...(executable ? [] : ["-m", "yt_dlp"]),
         "--ignore-config",
         "--no-plugin-dirs",
         "--no-playlist",
@@ -162,28 +192,29 @@ export function createAudioConverter(
       ];
       const metadata = JSON.parse(
         await run(
-          python,
+          command,
           [...common, "--dump-single-json", "--skip-download", "--", url],
           controller.signal,
+          runtimeDirectory,
         ),
       );
       if (
         typeof metadata.duration !== "number" ||
         !Number.isFinite(metadata.duration) ||
         metadata.duration <= 0 ||
-        metadata.duration > 600 ||
+        metadata.duration > AUDIO_MAX_SECONDS ||
         metadata.is_live ||
         metadata.live_status === "is_upcoming"
       ) {
         throw new AudioError(
-          "Choose a recorded video up to 10 minutes long. Live streams and videos with unknown duration are not supported.",
+          `Choose a recorded video up to ${AUDIO_MAX_MINUTES} minutes long. Live streams and videos with unknown duration are not supported.`,
           422,
         );
       }
       const source = join(directory, "source.audio");
       const output = join(directory, "audio.mp3");
       await run(
-        python,
+        command,
         [
           ...common,
           "--no-simulate",
@@ -192,7 +223,7 @@ export function createAudioConverter(
           "--downloader",
           "native",
           "--match-filters",
-          "!is_live & duration > 0 & duration <= 600",
+          `!is_live & duration > 0 & duration <= ${AUDIO_MAX_SECONDS}`,
           "--max-filesize",
           "40M",
           "-f",
@@ -203,6 +234,7 @@ export function createAudioConverter(
           url,
         ],
         controller.signal,
+        runtimeDirectory,
       );
       const sourceStat = await stat(source);
       if (!sourceStat.size || sourceStat.size > 40 * 1024 * 1024)
@@ -221,7 +253,7 @@ export function createAudioConverter(
           source,
           "-vn",
           "-t",
-          "600",
+          String(AUDIO_MAX_SECONDS),
           "-codec:a",
           "libmp3lame",
           "-b:a",
@@ -229,9 +261,10 @@ export function createAudioConverter(
           output,
         ],
         controller.signal,
+        runtimeDirectory,
       );
       const outputStat = await stat(output);
-      if (!outputStat.size || outputStat.size > 20 * 1024 * 1024)
+      if (!outputStat.size || outputStat.size > AUDIO_MAX_OUTPUT_BYTES)
         throw new AudioError(
           "The audio could not be prepared within the size limit.",
           422,

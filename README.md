@@ -37,38 +37,35 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 # sakalakaboomboom
 
-## Local YouTube-to-audio prototype
+## YouTube-to-MP3 tool
 
-No email, API key or paid conversion provider is needed. Requires macOS/Linux,
-Python 3.10+ and Node 22+ for yt-dlp's JavaScript runtime.
+Conversion runs in the existing Next.js Node Route Handler at `/api/youtube-audio`.
+No separate backend, email token or paid conversion API is required.
+
+For local macOS development (Node 22+ and Python 3.10+):
 
 ```bash
 npm run audio:setup
 npm run dev -- --hostname 127.0.0.1
 ```
 
-Open `/tools/web/youtube-video-to-audio` on the local server, or find it under
-Web & developer tools. The setup installs yt-dlp and an FFmpeg binary into
-`.venv-audio/`, which is ignored by Git. Do not upload that directory to Vercel.
+Linux builds run `scripts/prepare-audio.mjs` through `npm run build` to download
+checksum-verified yt-dlp 2026.08.19, including its Python runtime. FFmpeg is
+provided by `ffmpeg-static`. Next output tracing includes both executables in
+the API function and excludes the local Python environment. Use `npm run build`,
+not a direct `next build`, so the build preparation runs.
 
-The local Next.js API runs yt-dlp without a shell, checks video duration, downloads
-one video, and uses FFmpeg to produce a 128 kbps MP3. It allows one conversion at a
-time per process, limits videos to 10 minutes, limits source media to 40 MiB,
-monitors temporary disk usage, applies timeouts, and cleans up on success,
-failure or cancellation. Only canonical YouTube video URLs are passed to yt-dlp.
-Temporary folders have the prefix `sakalaka-audio-`; after a hard process/OS crash,
-an interrupted folder may remain in the system temporary directory.
+The public tool is `/tools/web/youtube-video-to-audio`, linked from the homepage,
+tools directory, web category and sitemap. It produces 128 kbps MP3 audio for
+videos up to 4 minutes, with a hard 4,000,000-byte response cap to stay below
+Vercel's 4.5 MB response limit. The function declares a 240-second maximum;
+conversion has a 180-second deadline, a 40 MiB source cap, temporary disk
+monitoring, one conversion per process, and cleanup on completion or failure.
+Hard process termination can leave files in the instance's temporary directory.
+Per-process concurrency is not a global quota or distributed rate limit.
+Hosting compute and bandwidth are still subject to the hosting plan's limits.
 
-The **conversion service is a local prototype**. Its public information page is
-indexable and linked from the homepage, tools directory, web category and sitemap.
-Production visitors see an availability notice instead of a nonworking form;
-the API is disabled outside development and on Vercel. A public conversion deployment
-needs a separate conversion worker, durable job/download handling, and shared
-rate limits; it must not just enable subprocess conversions in a Vercel function.
-Update the server-processing privacy disclosure when making it public.
-
-YouTube can refuse downloads or require playback verification. This prototype
-does not import browser cookies or use personal accounts. Such failures show an
-error rather than a fake download. Dependency versions should be updated and
-retested when YouTube changes its behavior. Convert only videos you own or have
-permission to download.
+YouTube may refuse hosting-provider IPs or require playback verification.
+Such failures return a visible error; this tool does not use personal cookies
+or bypass account restrictions. Retest actual downloads after each deployment.
+Only convert videos you own or have permission to download.

@@ -24,7 +24,7 @@ export const tools: ToolRecord[] = [
     "web",
     "youtube-video-to-audio",
     "YouTube to MP3 – Video to Audio",
-    "Explore YouTube audio downloads and our MP3 converter preview. Online conversion coming soon.",
+    "Convert YouTube videos up to 4 minutes into downloadable 128 kbps MP3 audio.",
     "published",
   ),
   tool(

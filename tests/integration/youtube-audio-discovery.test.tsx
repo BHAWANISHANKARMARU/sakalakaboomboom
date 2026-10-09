@@ -29,7 +29,7 @@ describe("public YouTube audio discovery", () => {
     ).toHaveLength(1);
   });
 
-  it("renders an indexable production page without a nonworking conversion form", () => {
+  it("renders the converter form on the indexable production page", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("VERCEL", "1");
     render(<YoutubePage />);
@@ -37,11 +37,11 @@ describe("public YouTube audio discovery", () => {
       screen.getByRole("heading", { level: 1, name: /YouTube to MP3/ }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("status", { name: "Online conversion coming soon" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Convert to MP3" }),
+      screen.queryByRole("status", { name: "Online conversion coming soon" }),
     ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Convert to MP3" }),
+    ).toBeEnabled();
     expect(metadata.robots).not.toMatchObject({ index: false });
     expect(metadata.alternates?.canonical).toBe(
       `https://www.sakalakaboomboom.online${path}`,

@@ -50,7 +50,35 @@ describe("local audio conversion", () => {
     for (const path of files) await expect(access(path)).rejects.toThrow();
   });
 
+  it.each([100, 4_000_001])(
+    "uses the standalone executable and enforces the response cap (%i bytes)",
+    async (size) => {
+      let output = "";
+      const convert = createAudioConverter({
+        executable: "/bundle/yt-dlp",
+        ffmpeg: "ffmpeg",
+        run: async (command, args) => {
+          if (command === "/bundle/yt-dlp") {
+            expect(args).not.toContain("-m");
+            if (args.includes("--dump-single-json"))
+              return JSON.stringify({ duration: 240 });
+            await writeFile(args[args.indexOf("-o") + 1], "source");
+          } else {
+            output = args.at(-1)!;
+            await writeFile(output, Buffer.alloc(size));
+          }
+          return "";
+        },
+      });
+      if (size > 4_000_000)
+        await expect(convert(url)).rejects.toMatchObject({ status: 422 });
+      else expect((await convert(url)).audio.length).toBe(size);
+      await expect(access(output)).rejects.toThrow();
+    },
+  );
+
   it.each([
+    { duration: 241, is_live: false },
     { duration: 601, is_live: false },
     { duration: 12, is_live: true },
     { duration: null, is_live: false },
@@ -107,6 +135,17 @@ describe("local audio conversion", () => {
         "$(echo bad)",
       ]),
     ).toBe("$(echo bad)");
+  });
+
+  it("gives subprocess extraction an owned temporary directory", async () => {
+    expect(
+      await runCommand(
+        process.execPath,
+        ["-e", "process.stdout.write(process.env.TMPDIR)"],
+        undefined,
+        "/tmp/owned-audio-runtime",
+      ),
+    ).toBe("/tmp/owned-audio-runtime");
   });
 
   it("stops an aborted subprocess", async () => {

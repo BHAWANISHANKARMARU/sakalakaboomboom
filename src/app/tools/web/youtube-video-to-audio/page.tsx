@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ToolLayout } from "@/components/tools/tool-layout";
-import { StatusNotice } from "@/components/ui/status-notice";
 import { YoutubeAudio } from "@/features/youtube-audio/youtube-audio";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
@@ -8,29 +7,26 @@ export const metadata: Metadata = {
   ...buildPageMetadata({
     title: "YouTube to MP3 – Video to Audio Converter",
     description:
-      "Explore YouTube to MP3 audio downloads, supported links and 128 kbps output. Try our local converter preview; online conversion is coming soon.",
+      "Convert YouTube videos up to 4 minutes to 128 kbps MP3 audio. Paste a video link, convert and download your audio without an account.",
     path: "/tools/web/youtube-video-to-audio",
   }),
 };
 
 export default function Page() {
-  const conversionAvailable =
-    process.env.NODE_ENV === "development" && !process.env.VERCEL;
   return (
     <ToolLayout
       title="YouTube to MP3 – Video to Audio"
-      description="A guide to YouTube audio downloads and a preview of our MP3 converter."
+      description="Paste a YouTube video link to convert and download its audio as an MP3."
       category="Web"
       path="/tools/web/youtube-video-to-audio"
       processing="server"
       details={
         <div className="grid gap-5">
           <p>
-            In the local preview, paste a single YouTube video link, select
-            Convert to MP3, and wait for the audio to finish processing. Select
-            Download MP3 to save it before leaving the page. The preview
-            supports recorded videos up to 10 minutes long and processes one
-            video at a time.
+            Paste a single YouTube video link, select Convert to MP3, and wait
+            for the audio to finish processing. Select Download MP3 to save it
+            before leaving the page. The tool supports recorded videos up to 4
+            minutes long and processes one video at a time.
           </p>
           <h2>What is YouTube to MP3 conversion?</h2>
           <p>
@@ -41,7 +37,7 @@ export default function Page() {
           </p>
           <h2>Supported video links and audio quality</h2>
           <p>
-            The preview accepts standard YouTube watch links, youtu.be links,
+            The tool accepts standard YouTube watch links, youtu.be links,
             Shorts and embedded video links. It creates 128 kbps MP3 files.
             Re-encoding cannot improve the quality of the original recording.
             Playlists, live streams and videos with unknown duration are not
@@ -50,9 +46,8 @@ export default function Page() {
           <h2>Frequently asked questions</h2>
           <h3>Can I convert a YouTube video online here now?</h3>
           <p>
-            Online conversion is not available yet. The converter has been
-            tested in a local preview, and this page will be updated when the
-            hosted service is ready.
+            Yes. Paste a supported video link into the tool above, select
+            Convert to MP3, then Download MP3 when processing finishes.
           </p>
           <h3>Does this tool download MP4 videos?</h3>
           <p>
@@ -61,9 +56,8 @@ export default function Page() {
           </p>
           <h3>Do I need an API key or an account?</h3>
           <p>
-            The local preview uses yt-dlp and FFmpeg without a paid conversion
-            API or an account. A video can still be unavailable if YouTube
-            requires playback verification or restricts access.
+            No API key or account is needed. A video can still be unavailable if
+            YouTube requires playback verification or restricts access.
           </p>
           <h3>What happens to the downloaded audio?</h3>
           <p>
@@ -75,15 +69,7 @@ export default function Page() {
         </div>
       }
     >
-      {conversionAvailable ? (
-        <YoutubeAudio />
-      ) : (
-        <StatusNotice
-          title="Online conversion coming soon"
-          description="Our YouTube-to-MP3 converter is currently available as a local preview. Online conversion is not available yet. Read below for supported links, audio quality and how the preview works."
-          tone="planned"
-        />
-      )}
+      <YoutubeAudio />
     </ToolLayout>
   );
 }

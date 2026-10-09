@@ -1,7 +1,9 @@
 import { AudioError, convertAudio } from "@/features/youtube-audio/server";
 import { normalizeYoutubeUrl } from "@/features/youtube-audio/validate";
+import { siteConfig } from "@/config/site";
 
 export const runtime = "nodejs";
+export const maxDuration = 240;
 
 function failure(error: string, status: number) {
   return Response.json(
@@ -11,12 +13,6 @@ function failure(error: string, status: number) {
 }
 
 export async function POST(request: Request) {
-  if (process.env.NODE_ENV !== "development" || process.env.VERCEL) {
-    return failure(
-      "This local prototype is not enabled on the hosted website yet.",
-      503,
-    );
-  }
   // Next may normalize request.url to localhost even for a 127.0.0.1 request.
   const normalized = new URL(request.url);
   let url: URL;
@@ -31,19 +27,25 @@ export async function POST(request: Request) {
       url.search ||
       url.hash
     )
-      return failure("Invalid local host.", 403);
+      return failure("Invalid host.", 403);
   } catch {
-    return failure("Invalid local host.", 403);
+    return failure("Invalid host.", 403);
   }
+  const publicHosts = [
+    new URL(siteConfig.url).host,
+    process.env.VERCEL_URL,
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  ].filter(Boolean);
+  const isPublicHost = publicHosts.includes(url.host);
+  const isLocal =
+    !process.env.VERCEL &&
+    ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
+  const origin = isPublicHost ? `https://${url.host}` : url.origin;
   if (
-    !["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) ||
-    (request.headers.get("origin") &&
-      request.headers.get("origin") !== url.origin)
+    (!isPublicHost && !isLocal) ||
+    (request.headers.get("origin") && request.headers.get("origin") !== origin)
   ) {
-    return failure(
-      "Open the tool from the local website to convert a video.",
-      403,
-    );
+    return failure("Open the tool on this website to convert a video.", 403);
   }
   if (
     request.headers.get("content-type")?.split(";")[0] !== "application/json"

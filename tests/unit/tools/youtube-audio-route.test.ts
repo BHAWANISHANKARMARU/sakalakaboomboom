@@ -30,11 +30,19 @@ describe("local audio API boundary", () => {
       (await POST(request("{}", { host: "example.com:3000" }))).status,
     ).toBe(403);
   });
-  it("stays disabled in production", async () => {
+  it("accepts production requests for the canonical website instead of rejecting all conversions", async () => {
     vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL", "1");
     expect(
-      (await POST(request('{"url":"https://youtu.be/BaW_jenozKc"}'))).status,
-    ).toBe(503);
+      (
+        await POST(
+          request("{}", {
+            host: "www.sakalakaboomboom.online",
+            origin: "https://www.sakalakaboomboom.online",
+          }),
+        )
+      ).status,
+    ).toBe(400);
   });
   it("blocks requests originating from other websites", async () => {
     vi.stubEnv("NODE_ENV", "development");

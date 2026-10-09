@@ -14,7 +14,7 @@ type ToolCard = {
 const popularTools: ToolCard[] = [
   {
     title: "YouTube to MP3",
-    description: "Video-to-audio guide · online conversion coming soon",
+    description: "Convert video links to 128 kbps MP3 audio",
     icon: "MP3",
     tone: "red",
     href: "/tools/web/youtube-video-to-audio",

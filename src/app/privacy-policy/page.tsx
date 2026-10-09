@@ -9,8 +9,16 @@ export default function Page() {
     >
       <h2>Browser processing</h2>
       <p>
-        Our initial tools process files and entered content locally in your
-        browser. We do not receive or store that content.
+        Tools marked as browser processing keep files and entered content in
+        your browser. We do not receive or store that content.
+      </p>
+      <h2>YouTube audio conversion</h2>
+      <p>
+        The YouTube audio tool sends your video link to our server, which
+        fetches media from YouTube and creates an MP3. Temporary media files are
+        deleted after processing. The returned audio stays in your browser until
+        you download it or leave the page. We do not request your YouTube
+        account credentials or cookies.
       </p>
       <h2>Analytics and advertising</h2>
       <p>

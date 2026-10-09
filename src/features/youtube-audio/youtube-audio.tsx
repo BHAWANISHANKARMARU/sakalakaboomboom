@@ -95,7 +95,7 @@ export function YoutubeAudio() {
           Your video, ready to listen
         </h2>
         <p className="text-muted mt-2">
-          Paste a YouTube link to create a 128 kbps MP3. Videos up to 10 minutes
+          Paste a YouTube link to create a 128 kbps MP3. Videos up to 4 minutes
           are supported.
         </p>
       </div>
