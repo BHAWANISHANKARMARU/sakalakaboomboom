@@ -45,6 +45,7 @@ describe("local audio API boundary", () => {
   it("returns the MP3 and propagates a generated correlation ID", async () => {
     vi.mocked(convertAudio).mockResolvedValueOnce({
       audio: Buffer.from("ID3"),
+      duration: 19,
       filename: "youtube-jNQXAC9IVRw.mp3",
     });
     const response = await POST(
@@ -114,6 +115,7 @@ describe("local audio API boundary", () => {
 it("transports Unicode titles safely and forwards trim", async () => {
   vi.mocked(convertAudio).mockResolvedValueOnce({
     audio: Buffer.from("ID3"),
+    duration: 19,
     filename: "मेरा गाना.mp3",
   });
   const response = await POST(

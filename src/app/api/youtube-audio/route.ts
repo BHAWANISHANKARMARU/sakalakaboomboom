@@ -92,6 +92,7 @@ export async function POST(request: Request) {
     return new Response(new Uint8Array(result.audio), {
       headers: {
         "Content-Type": "audio/mpeg",
+        "X-Audio-Duration": String(result.duration),
         "Content-Disposition": audioDisposition(result.filename),
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",

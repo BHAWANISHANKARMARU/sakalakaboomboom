@@ -487,6 +487,7 @@ export function createAudioConverter(
         );
       return {
         audio: await readFile(output),
+        duration: clip.end - clip.start,
         filename: audioFilename(
           metadata.title,
           `youtube-${new URL(url).searchParams.get("v")}`,
