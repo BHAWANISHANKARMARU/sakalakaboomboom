@@ -1,7 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { createStderrDiagnostics } from "./diagnostics";
 import { spawn } from "node:child_process";
-import { mkdir, mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { normalizeYoutubeUrl } from "./validate";
@@ -52,6 +60,7 @@ export const runCommand: CommandRunner = (
       return;
     }
     const childEnvironment = { ...process.env };
+    delete childEnvironment.YOUTUBE_COOKIES;
     // Both yt-dlp and bgutil otherwise independently inherit proxy settings.
     // Explicit --proxy is the sole network configuration for both processes.
     for (const key of Object.keys(childEnvironment)) {
@@ -134,7 +143,7 @@ export const runCommand: CommandRunner = (
               : {
                   client: "mweb",
                   fetchPot: "always",
-                  cookies: false,
+                  cookies: args.includes("--cookies"),
                   network:
                     args.includes("--proxy") &&
                     args[args.indexOf("--proxy") + 1]
@@ -205,6 +214,43 @@ export const runCommand: CommandRunner = (
     });
   });
 
+// Accept only a bounded Netscape-format YouTube jar supplied by the operator.
+// Validate without including any supplied text in an error or log.
+function validateCookies(value: string) {
+  const invalid = () => {
+    throw new AudioError(
+      "The audio service session is not configured correctly.",
+      503,
+    );
+  };
+  if (Buffer.byteLength(value) > 32_768 || value.includes("\0")) invalid();
+  const lines = value.split(/\r?\n/);
+  if (!/^# (?:Netscape )?HTTP Cookie File$/.test(lines[0])) invalid();
+  let count = 0;
+  for (const line of lines.slice(1)) {
+    if (
+      !line.trim() ||
+      (line.startsWith("#") && !line.startsWith("#HttpOnly_"))
+    )
+      continue;
+    const fields = line.replace(/^#HttpOnly_/, "").split("\t");
+    const [domain, subdomains, path, secure, expires, name] = fields;
+    if (
+      fields.length !== 7 ||
+      !/^(?:\.)?(?:[a-z0-9-]+\.)*youtube\.com$/i.test(domain) ||
+      !["TRUE", "FALSE"].includes(subdomains) ||
+      !path.startsWith("/") ||
+      !["TRUE", "FALSE"].includes(secure) ||
+      !/^\d+$/.test(expires) ||
+      !name ||
+      /[\x00-\x08\x0b-\x1f\x7f]/.test(line)
+    )
+      invalid();
+    count++;
+  }
+  if (!count) invalid();
+}
+
 export function createAudioConverter(
   options: {
     run?: CommandRunner;
@@ -265,6 +311,8 @@ export function createAudioConverter(
           );
         }
       }
+      const cookies = process.env.YOUTUBE_COOKIES;
+      if (cookies) validateCookies(cookies);
       const python =
         options.python ?? join(process.cwd(), ".venv-audio", "bin", "python");
       const executable =
@@ -284,6 +332,13 @@ export function createAudioConverter(
       // it even when cancellation kills the bootloader before its own cleanup.
       const runtimeDirectory = join(directory, "runtime");
       await mkdir(runtimeDirectory);
+      // Per-request, writable jar: yt-dlp can update it without sharing sessions
+      // between requests. Only a file path, never cookie contents, enters argv.
+      const cookiePath = cookies
+        ? join(runtimeDirectory, "cookies.txt")
+        : undefined;
+      if (cookiePath)
+        await writeFile(cookiePath, cookies!, { mode: 0o600, flag: "wx" });
       const workDirectory = directory;
       monitor = setInterval(() => {
         void readdir(workDirectory)
@@ -307,6 +362,7 @@ export function createAudioConverter(
         ...(executable ? [] : ["-m", "yt_dlp"]),
         "--proxy",
         proxy ?? "",
+        ...(cookiePath ? ["--cookies", cookiePath] : []),
         "--ignore-config",
         "--no-plugin-dirs",
         "--plugin-dirs",
@@ -337,6 +393,14 @@ export function createAudioConverter(
           { requestId, stage: "metadata" },
         ),
       );
+      // An operator session must never expose its private/member-only library
+      // through this unauthenticated public endpoint. Unknown visibility fails closed.
+      if (cookiePath && metadata.availability !== "public") {
+        throw new AudioError(
+          "Only public videos can be converted with this service.",
+          422,
+        );
+      }
       if (
         typeof metadata.duration !== "number" ||
         !Number.isFinite(metadata.duration) ||
@@ -362,7 +426,7 @@ export function createAudioConverter(
           "--downloader",
           "native",
           "--match-filters",
-          `!is_live & duration > 0 & duration <= ${AUDIO_MAX_SECONDS}`,
+          `!is_live & duration > 0 & duration <= ${AUDIO_MAX_SECONDS}${cookiePath ? " & availability = public" : ""}`,
           "--max-filesize",
           "40M",
           "-f",

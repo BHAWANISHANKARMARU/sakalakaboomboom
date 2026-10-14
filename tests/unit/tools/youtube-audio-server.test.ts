@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { access, writeFile } from "node:fs/promises";
+import { access, readFile, stat, writeFile } from "node:fs/promises";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createAudioConverter,
@@ -287,5 +287,100 @@ describe("local audio conversion", () => {
     );
     controller.abort();
     await expect(result).rejects.toThrow();
+  });
+});
+
+const cookieFixture =
+  "# Netscape HTTP Cookie File\n.youtube.com\tTRUE\t/\tTRUE\t0\tSID\tsecret-cookie-value\n";
+
+describe("operator YouTube session", () => {
+  it.each([false, true])(
+    "keeps cookies private and cleans them after failure=%s",
+    async (fail) => {
+      vi.stubEnv("YOUTUBE_COOKIES", cookieFixture);
+      let cookiePath = "";
+      const convert = createAudioConverter({
+        python: "python",
+        ffmpeg: "ffmpeg",
+        run: async (command, args) => {
+          expect(args.join(" ")).not.toContain("secret-cookie-value");
+          if (command === "python") {
+            expect(args).toContain("--cookies");
+            const path = args[args.indexOf("--cookies") + 1];
+            if (cookiePath) expect(path).toBe(cookiePath);
+            cookiePath = path;
+            expect(await readFile(path, "utf8")).toBe(cookieFixture);
+            expect((await stat(path)).mode & 0o777).toBe(0o600);
+            if (fail)
+              throw new Error("upstream error with secret-cookie-value");
+            if (args.includes("--dump-single-json"))
+              return JSON.stringify({ duration: 10, availability: "public" });
+            expect(args[args.indexOf("--match-filters") + 1]).toContain(
+              "availability = public",
+            );
+            await writeFile(args[args.indexOf("-o") + 1], "source");
+          } else {
+            expect(args).not.toContain("--cookies");
+            await writeFile(args.at(-1)!, "ID3-test");
+          }
+          return "";
+        },
+      });
+      if (fail)
+        await expect(convert(url)).rejects.toMatchObject({ status: 502 });
+      else expect((await convert(url)).audio.toString()).toBe("ID3-test");
+      expect(cookiePath).not.toBe("");
+      await expect(access(cookiePath)).rejects.toThrow();
+    },
+  );
+
+  it.each([
+    "private",
+    "premium_only",
+    "subscriber_only",
+    "needs_auth",
+    "unlisted",
+    undefined,
+  ])(
+    "refuses authenticated non-public or unknown visibility: %s",
+    async (availability) => {
+      vi.stubEnv("YOUTUBE_COOKIES", cookieFixture);
+      const run = vi.fn(async () =>
+        JSON.stringify({ duration: 10, availability }),
+      );
+      await expect(createAudioConverter({ run })(url)).rejects.toMatchObject({
+        status: 422,
+        message: expect.stringContaining("public"),
+      });
+      expect(run).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it.each([
+    "secret-cookie-value",
+    "# Netscape HTTP Cookie File\n",
+    cookieFixture.replace(".youtube.com", ".example.com"),
+    cookieFixture.replace("\tTRUE\t0", "\tMAYBE\t0"),
+  ])(
+    "rejects malformed session configuration without spawning",
+    async (cookies) => {
+      vi.stubEnv("YOUTUBE_COOKIES", cookies);
+      const run = vi.fn();
+      await expect(createAudioConverter({ run })(url)).rejects.toMatchObject({
+        status: 503,
+        message: "The audio service session is not configured correctly.",
+      });
+      expect(run).not.toHaveBeenCalled();
+    },
+  );
+
+  it("does not pass the cookie environment secret to subprocesses", async () => {
+    vi.stubEnv("YOUTUBE_COOKIES", cookieFixture);
+    expect(
+      await runCommand(process.execPath, [
+        "-e",
+        "process.stdout.write(String(process.env.YOUTUBE_COOKIES === undefined))",
+      ]),
+    ).toBe("true");
   });
 });

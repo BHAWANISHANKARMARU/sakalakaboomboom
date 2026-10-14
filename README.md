@@ -56,7 +56,8 @@ BgUtils 2.0.2 playback-token provider (commit
 `26475e9d3665b972c4aeb83b4dbaafcf64b88438`) and its locked dependencies.
 yt-dlp uses its on-demand Node script with the mobile-web client and requests
 player/media tokens; token caches stay inside each request’s temporary directory.
-No additional HTTP server or account cookies are used.
+No additional HTTP server is used. Account cookies are disabled unless the operator
+explicitly configures the optional server-only session described below.
 Next output tracing includes these runtime dependencies and both executables in
 the API function and excludes the local Python environment. Use `npm run build`,
 not a direct `next build`, so the build preparation runs.
@@ -72,8 +73,8 @@ Per-process concurrency is not a global quota or distributed rate limit.
 Hosting compute and bandwidth are still subject to the hosting plan's limits.
 
 YouTube may refuse hosting-provider IPs or require playback verification.
-Such failures return a visible error; this tool does not use personal cookies
-or bypass account restrictions. Retest actual downloads after each deployment.
+Such failures return a visible error. Session configuration is a controlled test,
+not a guarantee of access. Retest actual downloads after each deployment.
 Only convert videos you own or have permission to download.
 
 Deployment check on 2026-10-09: the production page and function deployed
@@ -93,6 +94,42 @@ production environment and redeploy; never use a `NEXT_PUBLIC_` variable or put
 credentials in source control. No proxy is included, purchased or automatically
 selected. It must be tested from production before treating downloads as working.
 Without this variable the route continues to use a direct connection.
+
+## Optional operator session (production test still required)
+
+The October 14 production logs confirm mweb metadata extraction fails with
+playback verification after BgUtils returns a player token. The runtime and
+provider load successfully; neither token acceptance nor an IP block is proven.
+The [provider guidance](https://github.com/Brainicism/bgutil-ytdlp-pot-provider#verification)
+describes cookies as an additional test for this symptom.
+
+Set **`YOUTUBE_COOKIES`** in Vercel → project Settings → Environment Variables,
+scoped to **Production**, then redeploy. Its value is the complete multiline
+Netscape cookie file containing **only youtube.com cookies** (not JSON, base64,
+a filename, or literal `\n` sequences). Use an operator-controlled dedicated
+account, not a personal account with private content. Follow yt-dlp's
+[official YouTube cookie export instructions](https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies).
+That guide warns accounts can be temporarily or permanently banned. Cookies can
+expire or be rotated; do not treat this as a maintenance-free public service.
+Never paste cookies in chat, commit them, or use a `NEXT_PUBLIC_` variable.
+
+The server validates a maximum 32 KiB Netscape jar with YouTube domains only,
+writes a mode-0600 cookie file inside the request-owned temporary directory,
+and passes only its path to both yt-dlp stages. Cookie contents are removed from
+child environments, excluded from diagnostics and never returned to browsers.
+The jar is deleted on success, error or cancellation (hard platform termination
+can interrupt cleanup). Concurrent instances never share a writable jar.
+Authenticated conversions reject non-public or unknown video availability before
+downloading, and enforce public availability again in the download filter.
+Logs report only `cookies: true/false`. Browser requests cannot supply cookies.
+
+After redeploying, convert the public test video `jNQXAC9IVRw`; verify HTTP 200,
+`audio/mpeg`, a playable MP3, and successful metadata/download/encode events with
+`cookies: true` for both yt-dlp stages. If verification persists, this hypothesis
+has not solved production access. Remove the environment variable and redeploy
+to restore the original anonymous behavior. Proxy settings are unchanged;
+no proxy or paid service is required by this option. An authenticated production
+test is blocked until the operator privately configures a session.
 
 ## Production diagnostics and controlled verification
 
