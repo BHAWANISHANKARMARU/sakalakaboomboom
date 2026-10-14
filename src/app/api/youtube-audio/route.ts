@@ -1,3 +1,8 @@
+import {
+  audioDisposition,
+  validateTrim,
+  type AudioTrim,
+} from "@/features/youtube-audio/options";
 import { randomUUID } from "node:crypto";
 import { AudioError, convertAudio } from "@/features/youtube-audio/server";
 import { normalizeYoutubeUrl } from "@/features/youtube-audio/validate";
@@ -54,6 +59,7 @@ export async function POST(request: Request) {
     return failure("Send a YouTube link as JSON.", 415);
   }
   let input: string;
+  let trim: AudioTrim | undefined;
   try {
     const reader = request.body?.getReader();
     if (!reader) return failure("Enter a YouTube video link.", 400);
@@ -71,16 +77,22 @@ export async function POST(request: Request) {
     }
     const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
     input = normalizeYoutubeUrl(body?.url);
+    try {
+      validateTrim(body?.trim);
+    } catch (error) {
+      return failure((error as Error).message, 400);
+    }
+    trim = body?.trim;
   } catch {
     return failure("Paste a valid YouTube video link.", 400);
   }
   const requestId = randomUUID();
   try {
-    const result = await convertAudio(input, request.signal, requestId);
+    const result = await convertAudio(input, request.signal, requestId, trim);
     return new Response(new Uint8Array(result.audio), {
       headers: {
         "Content-Type": "audio/mpeg",
-        "Content-Disposition": `attachment; filename="${result.filename}"`,
+        "Content-Disposition": audioDisposition(result.filename),
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",
         "X-Request-ID": requestId,

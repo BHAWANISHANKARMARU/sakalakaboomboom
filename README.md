@@ -64,8 +64,12 @@ not a direct `next build`, so the build preparation runs.
 
 The public tool is `/tools/web/youtube-video-to-audio`, linked from the homepage,
 tools directory, web category and sitemap. It produces 128 kbps MP3 audio for
-videos up to 4 minutes, with a hard 4,000,000-byte response cap to stay below
-Vercel's 4.5 MB response limit. The function declares a 240-second maximum;
+videos up to 4 minutes. Downloads use a sanitized YouTube title, preserving Unicode.
+Optional start/end trim fields accept seconds or mm:ss; blank fields select the
+full video. The server validates ranges against the actual duration and encodes
+only the selected interval, with an audio preview before download. Trimming does
+not extend the four-minute source-video limit. A hard 4,000,000-byte response cap
+keeps downloads below Vercel's 4.5 MB response limit. The function declares a 240-second maximum;
 conversion has a 180-second deadline, a 40 MiB source cap, temporary disk
 monitoring, one conversion per process, and cleanup on completion or failure.
 Hard process termination can leave files in the instance's temporary directory.

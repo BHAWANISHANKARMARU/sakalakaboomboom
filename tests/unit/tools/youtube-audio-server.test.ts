@@ -62,7 +62,7 @@ describe("local audio conversion", () => {
       const result = await convert(url);
       expect(steps).toEqual(["metadata", "download", "mp3"]);
       expect(result.audio.toString()).toBe("ID3-test-audio");
-      expect(result.filename).toBe("youtube-BaW_jenozKc.mp3");
+      expect(result.filename).toBe("Example.mp3");
       for (const path of files) await expect(access(path)).rejects.toThrow();
     },
   );
@@ -383,4 +383,33 @@ describe("operator YouTube session", () => {
       ]),
     ).toBe("true");
   });
+});
+
+it("passes the selected interval to FFmpeg and uses the title", async () => {
+  const convert = createAudioConverter({
+    python: "python",
+    ffmpeg: "ffmpeg",
+    run: async (command, args) => {
+      if (args.includes("--dump-single-json"))
+        return JSON.stringify({ duration: 100, title: "मेरा गाना" });
+      if (command === "python")
+        await writeFile(args[args.indexOf("-o") + 1], "source");
+      else {
+        expect(args[args.indexOf("-ss") + 1]).toBe("15");
+        expect(args[args.indexOf("-t") + 1]).toBe("20");
+        await writeFile(args.at(-1)!, "ID3");
+      }
+      return "";
+    },
+  });
+  expect(
+    (await convert(url, undefined, undefined, { start: 15, end: 35 })).filename,
+  ).toBe("मेरा गाना.mp3");
+});
+it("rejects an end beyond actual duration before downloading", async () => {
+  const run = vi.fn(async () => JSON.stringify({ duration: 19 }));
+  await expect(
+    createAudioConverter({ run })(url, undefined, undefined, { end: 20 }),
+  ).rejects.toMatchObject({ status: 400 });
+  expect(run).toHaveBeenCalledTimes(1);
 });

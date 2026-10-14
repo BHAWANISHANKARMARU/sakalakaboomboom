@@ -110,3 +110,38 @@ describe("local audio API boundary", () => {
     expect((await POST(request("x".repeat(5000)))).status).toBe(413);
   });
 });
+
+it("transports Unicode titles safely and forwards trim", async () => {
+  vi.mocked(convertAudio).mockResolvedValueOnce({
+    audio: Buffer.from("ID3"),
+    filename: "मेरा गाना.mp3",
+  });
+  const response = await POST(
+    request(
+      JSON.stringify({
+        url: "https://youtu.be/jNQXAC9IVRw",
+        trim: { start: 1, end: 5 },
+      }),
+    ),
+  );
+  expect(response.status).toBe(200);
+  expect(response.headers.get("content-disposition")).toContain(
+    encodeURIComponent("मेरा गाना.mp3"),
+  );
+  expect(vi.mocked(convertAudio).mock.calls[0][3]).toEqual({
+    start: 1,
+    end: 5,
+  });
+});
+it("rejects invalid trim before invoking conversion", async () => {
+  const response = await POST(
+    request(
+      JSON.stringify({
+        url: "https://youtu.be/jNQXAC9IVRw",
+        trim: { start: 20, end: 10 },
+      }),
+    ),
+  );
+  expect(response.status).toBe(400);
+  expect(convertAudio).not.toHaveBeenCalled();
+});

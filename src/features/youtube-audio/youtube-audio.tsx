@@ -1,10 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  parseTrimTime,
+  validateTrim,
+  responseFilename,
+  type AudioTrim,
+} from "./options";
 import { normalizeYoutubeUrl } from "./validate";
 
 export function YoutubeAudio() {
   const [url, setUrl] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<{
@@ -33,8 +41,11 @@ export function YoutubeAudio() {
     setError("");
     setResult(null);
     let canonical: string;
+    let trim: AudioTrim;
     try {
       canonical = normalizeYoutubeUrl(url);
+      trim = { start: parseTrimTime(start), end: parseTrimTime(end) };
+      validateTrim(trim);
     } catch (error) {
       setError((error as Error).message);
       return;
@@ -47,7 +58,7 @@ export function YoutubeAudio() {
       const response = await fetch("/api/youtube-audio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: canonical }),
+        body: JSON.stringify({ url: canonical, trim }),
         signal: controller.signal,
       });
       if (!response.ok) {
@@ -66,7 +77,10 @@ export function YoutubeAudio() {
       if (controller.signal.aborted) return;
       setResult({
         url: URL.createObjectURL(audio),
-        filename: `youtube-${new URL(canonical).searchParams.get("v")}.mp3`,
+        filename: responseFilename(
+          response.headers.get("content-disposition"),
+          `youtube-${new URL(canonical).searchParams.get("v")}`,
+        ),
         size: audio.size,
       });
     } catch (error) {
@@ -116,6 +130,46 @@ export function YoutubeAudio() {
           }}
         />
       </label>
+      <fieldset disabled={busy} className="grid gap-3">
+        <legend className="text-navy font-bold">Trim audio (optional)</legend>
+        <p id="trim-help" className="text-muted text-sm">
+          Use mm:ss or seconds. Leave blank for the full video.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="grid gap-2">
+            Start time
+            <input
+              className="field"
+              type="text"
+              maxLength={12}
+              placeholder="0:00"
+              aria-describedby="trim-help"
+              value={start}
+              onChange={(event) => {
+                setStart(event.target.value);
+                setResult(null);
+                setError("");
+              }}
+            />
+          </label>
+          <label className="grid gap-2">
+            End time
+            <input
+              className="field"
+              type="text"
+              maxLength={12}
+              placeholder="End of video"
+              aria-describedby="trim-help"
+              value={end}
+              onChange={(event) => {
+                setEnd(event.target.value);
+                setResult(null);
+                setError("");
+              }}
+            />
+          </label>
+        </div>
+      </fieldset>
       <div className="flex flex-wrap gap-3">
         <button
           className="button disabled:cursor-wait disabled:opacity-60"
@@ -149,6 +203,13 @@ export function YoutubeAudio() {
           <p role="status">
             Your MP3 is ready ({(result.size / 1024 / 1024).toFixed(1)} MB).
           </p>
+          <p className="max-w-full break-words">{result.filename}</p>
+          <audio
+            controls
+            src={result.url}
+            aria-label="Preview converted audio"
+            className="max-w-full"
+          />
           <a className="button" href={result.url} download={result.filename}>
             Download MP3
           </a>

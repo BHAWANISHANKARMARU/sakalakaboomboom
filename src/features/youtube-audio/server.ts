@@ -1,3 +1,4 @@
+import { audioFilename, validateTrim, type AudioTrim } from "./options";
 import { randomUUID } from "node:crypto";
 import { createStderrDiagnostics } from "./diagnostics";
 import { spawn } from "node:child_process";
@@ -266,10 +267,12 @@ export function createAudioConverter(
     input: unknown,
     signal?: AbortSignal,
     requestId = randomUUID(),
+    trim?: AudioTrim,
   ) => {
     let url: string;
     try {
       url = normalizeYoutubeUrl(input);
+      validateTrim(trim);
     } catch (error) {
       throw new AudioError((error as Error).message, 400);
     }
@@ -414,6 +417,12 @@ export function createAudioConverter(
           422,
         );
       }
+      let clip: { start: number; end: number };
+      try {
+        clip = validateTrim(trim, metadata.duration);
+      } catch (error) {
+        throw new AudioError((error as Error).message, 400);
+      }
       const source = join(directory, "source.audio");
       const output = join(directory, "audio.mp3");
       await run(
@@ -455,9 +464,11 @@ export function createAudioConverter(
           "info",
           "-i",
           source,
+          "-ss",
+          String(clip.start),
           "-vn",
           "-t",
-          String(AUDIO_MAX_SECONDS),
+          String(clip.end - clip.start),
           "-codec:a",
           "libmp3lame",
           "-b:a",
@@ -476,7 +487,10 @@ export function createAudioConverter(
         );
       return {
         audio: await readFile(output),
-        filename: `youtube-${new URL(url).searchParams.get("v")}.mp3`,
+        filename: audioFilename(
+          metadata.title,
+          `youtube-${new URL(url).searchParams.get("v")}`,
+        ),
       };
     } catch (error) {
       if (tooLarge)

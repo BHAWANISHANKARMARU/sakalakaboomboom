@@ -75,3 +75,48 @@ describe("YouTube audio interface", () => {
     ).not.toBeInTheDocument();
   });
 });
+
+it("sends trim times and uses the title from the response for download", async () => {
+  const fetcher = vi.fn().mockResolvedValue({
+    ok: true,
+    headers: new Headers({
+      "content-type": "audio/mpeg",
+      "content-disposition":
+        "attachment; filename*=UTF-8''" + encodeURIComponent("मेरा गाना.mp3"),
+    }),
+    blob: async () => new Blob(["ID3"]),
+  });
+  vi.stubGlobal("fetch", fetcher);
+  Object.defineProperty(URL, "createObjectURL", {
+    configurable: true,
+    value: () => "blob:trim",
+  });
+  Object.defineProperty(URL, "revokeObjectURL", {
+    configurable: true,
+    value: vi.fn(),
+  });
+  render(<YoutubeAudio />);
+  fireEvent.change(screen.getByLabelText("YouTube video URL"), {
+    target: { value: "https://youtu.be/jNQXAC9IVRw" },
+  });
+  fireEvent.change(screen.getByLabelText("Start time"), {
+    target: { value: "0:05" },
+  });
+  fireEvent.change(screen.getByLabelText("End time"), {
+    target: { value: "0:15" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Convert to MP3" }));
+  expect(
+    await screen.findByRole("link", { name: "Download MP3" }),
+  ).toHaveAttribute("download", "मेरा गाना.mp3");
+  expect(JSON.parse(fetcher.mock.calls[0][1].body).trim).toEqual({
+    start: 5,
+    end: 15,
+  });
+  fireEvent.change(screen.getByLabelText("End time"), {
+    target: { value: "0:10" },
+  });
+  expect(
+    screen.queryByRole("link", { name: "Download MP3" }),
+  ).not.toBeInTheDocument();
+});
