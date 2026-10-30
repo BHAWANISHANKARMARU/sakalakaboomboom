@@ -2,6 +2,11 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 const routes = [
   "/",
+  "/tools/image/form-ready-kit",
+  "/hi/tools/form-ready-kit",
+  "/tools/image/image-resizer",
+  "/tools/pdf/pdf-page-extractor",
+  "/how-to/resize-photo-signature-for-online-form",
   "/about",
   "/blog",
   "/contact",

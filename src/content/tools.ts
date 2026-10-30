@@ -71,6 +71,8 @@ export const tools: ToolRecord[] = [
     "pdf-page-extractor",
     "PDF Page Extractor",
     "Save selected pages from a PDF.",
+    "published",
+    ["pdf-merger", "jpg-to-pdf"],
   ),
   tool(
     "image-compressor",
@@ -80,6 +82,15 @@ export const tools: ToolRecord[] = [
     "Make JPEG, PNG and WebP images smaller.",
     "published",
     ["photo-signature-resizer", "jpg-to-pdf"],
+  ),
+  tool(
+    "form-ready-kit",
+    "image",
+    "form-ready-kit",
+    "Form Ready Kit",
+    "Prepare your photo, signature and documents for an online form in one go.",
+    "published",
+    ["photo-signature-resizer", "jpg-to-pdf", "age-calculator"],
   ),
   tool(
     "photo-signature-resizer",
@@ -95,7 +106,9 @@ export const tools: ToolRecord[] = [
     "image",
     "image-resizer",
     "Image Resizer",
-    "Resize images to exact dimensions.",
+    "Resize images to exact pixel dimensions.",
+    "published",
+    ["image-compressor", "photo-signature-resizer"],
   ),
   tool(
     "jpg-to-png",
@@ -103,6 +116,8 @@ export const tools: ToolRecord[] = [
     "jpg-to-png",
     "JPG to PNG",
     "Convert JPG images to PNG.",
+    "published",
+    ["png-to-jpg", "image-resizer"],
   ),
   tool(
     "png-to-jpg",
@@ -110,6 +125,8 @@ export const tools: ToolRecord[] = [
     "png-to-jpg",
     "PNG to JPG",
     "Convert PNG images to JPG.",
+    "published",
+    ["jpg-to-png", "image-resizer"],
   ),
   tool(
     "word-counter",

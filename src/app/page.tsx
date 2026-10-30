@@ -14,6 +14,13 @@ type ToolCard = {
 
 const popularTools: ToolCard[] = [
   {
+    title: "Form Ready Kit",
+    description: "Photo, signature and PDF ready in one go",
+    icon: "✓",
+    tone: "blue",
+    href: "/tools/image/form-ready-kit",
+  },
+  {
     title: "Photo and Signature Resizer",
     description: "Fit images to online form KB limits",
     icon: "KB",
@@ -68,13 +75,6 @@ const popularTools: ToolCard[] = [
     icon: "₹",
     tone: "teal",
     href: "/tools/calculators/gst-calculator",
-  },
-  {
-    title: "QR Code Generator",
-    description: "Create a downloadable QR code instantly",
-    icon: "QR",
-    tone: "blue",
-    href: "/tools/web/qr-code-generator",
   },
 ];
 
@@ -186,6 +186,18 @@ export default function Home() {
             Simple, fast and secure online tools for PDFs, images, text and
             everyday tasks—plus helpful resources for Indian students.
           </p>
+          <p className="mt-5 mb-6 flex flex-wrap justify-center gap-3">
+            <Link className="button" href="/tools/image/form-ready-kit">
+              Get my form files ready
+            </Link>
+            <Link
+              className="button secondary"
+              href="/hi/tools/form-ready-kit"
+              hrefLang="hi"
+            >
+              हिंदी में शुरू करें
+            </Link>
+          </p>
           <form action="/search" className="home-search">
             <label className="sr-only" htmlFor="home-search">
               Search tools and guides
@@ -201,7 +213,7 @@ export default function Home() {
           <div className="home-popular-searches" aria-label="Popular searches">
             <strong>Popular:</strong>
             {[
-              "Photo Resizer",
+              "Form Ready Kit",
               "PDF Merger",
               "JPG to PDF",
               "Age Calculator",

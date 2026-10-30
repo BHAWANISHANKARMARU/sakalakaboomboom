@@ -91,6 +91,118 @@ export const toolGuides: Record<string, ToolGuide> = {
       },
     ],
   },
+  "form-ready-kit": {
+    seoTitle: "Form Ready Kit – Photo, Signature and PDF",
+    metaDescription:
+      "Prepare your photo, signature and documents for exam and job forms in one place. Checks your KB limits. Free, in English and Hindi, with no upload.",
+    steps: [
+      "Open your official notification and note the limits it gives.",
+      "Add your photo, signature and any document images, then enter the limits.",
+      "Select Make my files ready, check each result, then download your files.",
+    ],
+    example:
+      "Add one photo, one signature and three marksheet photos. You get photo.jpg, signature.jpg and documents.pdf, each marked as within or outside your limit.",
+    note: "Limits differ between exams and can change every year. The starting values are only examples, so always follow your official notification.",
+    faqs: [
+      {
+        question: "What makes this different from a normal image resizer?",
+        answer:
+          "It prepares all your files in one step and checks each one against the limits you enter, so you do not need a separate tool for each file.",
+      },
+      {
+        question: "Is my data uploaded?",
+        answer:
+          "No. Your photo, signature and documents are processed in your browser and stay on your device.",
+      },
+      {
+        question: "Is it available in Hindi?",
+        answer: "Yes. Use the Hindi link on this page.",
+      },
+    ],
+  },
+  "image-resizer": {
+    seoTitle: "Image Resizer – Resize to Exact Pixels Online",
+    metaDescription:
+      "Resize JPG, PNG and WebP images to exact pixel dimensions in your browser. Keep the shape or set both sides. Free with no upload.",
+    steps: [
+      "Choose a JPEG, PNG or WebP image.",
+      "Enter a width, a height, or both.",
+      "Select Resize image and download the result.",
+    ],
+    note: "Enter only one side to keep the image’s shape. Entering both sides can stretch it. WebP images are saved as JPG.",
+    faqs: [
+      {
+        question: "Can I make a small image larger?",
+        answer:
+          "Yes, but it will not gain detail, so it can look soft or blurry.",
+      },
+      {
+        question: "Is my image uploaded?",
+        answer: "No. Resizing happens on your device.",
+      },
+    ],
+  },
+  "jpg-to-png": {
+    seoTitle: "JPG to PNG Converter Without Uploading",
+    metaDescription:
+      "Convert a JPG image to PNG in your browser. Free, with no sign up and no upload. Works on phones and computers.",
+    steps: [
+      "Choose a JPG image.",
+      "Select Convert to PNG.",
+      "Download the PNG file.",
+    ],
+    faqs: [
+      {
+        question: "Will PNG improve my photo’s quality?",
+        answer:
+          "No. PNG keeps the image as it is now, but it cannot restore detail already lost in the JPG.",
+      },
+      {
+        question: "Why is the PNG larger?",
+        answer: "PNG does not throw away detail, so photos are usually larger.",
+      },
+    ],
+  },
+  "png-to-jpg": {
+    seoTitle: "PNG to JPG Converter Without Uploading",
+    metaDescription:
+      "Convert a PNG image to JPG in your browser, often with a much smaller file. Free, with no sign up and no upload.",
+    steps: [
+      "Choose a PNG image.",
+      "Select Convert to JPG.",
+      "Download the JPG file.",
+    ],
+    faqs: [
+      {
+        question: "What happens to transparent areas?",
+        answer: "JPG has no transparency, so those areas become white.",
+      },
+      {
+        question: "Is my image uploaded?",
+        answer: "No. The conversion happens on your device.",
+      },
+    ],
+  },
+  "pdf-page-extractor": {
+    seoTitle: "Extract Pages From a PDF Without Uploading",
+    metaDescription:
+      "Save only the pages you need from a PDF into a new file. Enter pages like 1-3, 5. Free, in your browser, with no upload.",
+    steps: [
+      "Choose a PDF file up to 25 MB.",
+      "Enter the pages to keep, such as 1-3, 5.",
+      "Select Extract pages and download the new PDF.",
+    ],
+    faqs: [
+      {
+        question: "Does this change my original PDF?",
+        answer: "No. It creates a new file and leaves the original as it is.",
+      },
+      {
+        question: "Can it open password-protected PDFs?",
+        answer: "No. Remove the password in a PDF reader you trust first.",
+      },
+    ],
+  },
   "photo-signature-resizer": {
     seoTitle: "Resize Photo and Signature to KB for Online Forms",
     metaDescription:

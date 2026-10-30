@@ -6,6 +6,7 @@ import { staticPagePaths } from "@/lib/seo/static-pages";
 export default function sitemap(): MetadataRoute.Sitemap {
   const basicRoutes = [
     ...staticPagePaths,
+    "/hi/tools/form-ready-kit",
     ...getLiveTools("en").map((item) => item.url),
     ...getPublishedArticles("en").map(
       (item) => `/${item.section}/${item.slug}`,

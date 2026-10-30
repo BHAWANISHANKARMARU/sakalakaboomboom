@@ -96,7 +96,6 @@ export const staticPages: StaticPageRecord[] = [
   },
   {
     path: "/how-to",
-    noIndex: true,
     title: "How-to Guides",
     description:
       "Clear instructions for common digital tasks, files, images, text and websites.",

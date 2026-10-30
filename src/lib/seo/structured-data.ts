@@ -34,6 +34,25 @@ export const breadcrumbJsonLd = (items: { name: string; path: string }[]) => ({
     item: new URL(item.path, siteConfig.url).toString(),
   })),
 });
+export const articleJsonLd = (article: {
+  title: string;
+  description: string;
+  slug: string;
+  section: string;
+  updatedAt: string;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: article.title,
+  description: article.description,
+  dateModified: article.updatedAt,
+  url: new URL(
+    `/${article.section}/${article.slug}`,
+    siteConfig.url,
+  ).toString(),
+  publisher: { "@type": "Organization", name: siteConfig.name },
+});
+
 export const toolJsonLd = (
   name: string,
   description: string,

@@ -5,29 +5,19 @@ const groups = [
   {
     title: "Tools",
     links: [
+      ["Form Ready Kit", "/tools/image/form-ready-kit"],
       ["PDF Tools", "/tools/pdf"],
       ["Image Tools", "/tools/image"],
-      ["Text Tools", "/tools/text"],
-      ["Developer Tools", "/tools/web"],
+      ["Calculators", "/tools/calculators"],
       ["All Tools", "/tools"],
     ],
   },
   {
-    title: "Education",
+    title: "Learn",
     links: [
-      ["Class 11", "/education/class-11"],
-      ["Class 12", "/education/class-12"],
-      ["NCERT", "/education/ncert"],
-      ["CBSE", "/education/cbse"],
-    ],
-  },
-  {
-    title: "Explore",
-    links: [
-      ["Competitive Exams", "/exams"],
-      ["Technology", "/technology"],
+      ["Class 9 Maths", "/education/class-9/mathematics/mathematics-2026-27"],
+      ["हिंदी में पढ़ें", "/hi/education"],
       ["How-to Guides", "/how-to"],
-      ["Blog", "/blog"],
     ],
   },
   {

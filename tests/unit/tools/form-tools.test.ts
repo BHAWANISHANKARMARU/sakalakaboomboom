@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { tools } from "@/content/tools";
 import { toolGuides } from "@/content/tool-guides";
+import { targetSize } from "@/features/image-converter/convert";
+import { parsePageRanges } from "@/features/pdf-pages/extract";
 import { fitOnPage, imagesToPdf } from "@/features/jpg-to-pdf/convert";
 import { centreCrop, findBestQuality } from "@/features/photo-resizer/resize";
 import {
@@ -40,6 +42,25 @@ describe("JPG to PDF", () => {
   it("rejects a file that is not really an image", async () => {
     const file = new File(["not an image"], "a.jpg", { type: "image/jpeg" });
     await expect(imagesToPdf([file])).rejects.toThrow("not a JPG or PNG");
+  });
+});
+
+describe("page ranges", () => {
+  it("reads ranges, single pages and removes repeats", () => {
+    expect(parsePageRanges("1-3, 5, 2", 6)).toEqual([0, 1, 2, 4]);
+  });
+  it.each(["0", "7", "3-1", "abc", ""])("rejects %s", (input) => {
+    expect(parsePageRanges(input, 6)).toBeUndefined();
+  });
+});
+
+describe("image target size", () => {
+  it("keeps the shape when only one side is given", () => {
+    expect(targetSize(1000, 500, 200)).toEqual({ width: 200, height: 100 });
+    expect(targetSize(1000, 500, undefined, 100)).toEqual({
+      width: 200,
+      height: 100,
+    });
   });
 });
 
