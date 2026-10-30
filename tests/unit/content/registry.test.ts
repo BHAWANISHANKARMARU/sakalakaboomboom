@@ -10,7 +10,7 @@ import {
 
 describe("content registry", () => {
   it("contains the expanded unique tool roadmap and six categories", () => {
-    expect(tools).toHaveLength(38);
+    expect(tools).toHaveLength(39);
     expect(new Set(tools.map((tool) => tool.id)).size).toBe(tools.length);
     expect(
       new Set(tools.map((tool) => `${tool.category}/${tool.slug}`)).size,
@@ -18,8 +18,8 @@ describe("content registry", () => {
     expect(categories).toHaveLength(6);
   });
 
-  it("publishes the foundation tools, everyday tools and YouTube audio page", () => {
-    expect(getLiveTools("en")).toHaveLength(26);
+  it("publishes the foundation and everyday tools but not YouTube audio", () => {
+    expect(getLiveTools("en")).toHaveLength(27);
     expect(getToolBySlug("pdf", "pdf-compressor", "en")).toBeUndefined();
     expect(getToolBySlug("pdf", "pdf-merger", "hi")?.title).toBe("PDF Merger");
   });

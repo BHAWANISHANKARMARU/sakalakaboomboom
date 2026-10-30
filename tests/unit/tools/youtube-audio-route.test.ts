@@ -5,6 +5,9 @@ vi.mock("@/features/youtube-audio/server", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/features/youtube-audio/server")>()),
   convertAudio: vi.fn(),
 }));
+vi.mock("@/lib/content/registry", () => ({
+  getToolBySlug: () => ({ id: "youtube-video-to-audio" }),
+}));
 import { POST } from "@/app/api/youtube-audio/route";
 
 afterEach(() => {

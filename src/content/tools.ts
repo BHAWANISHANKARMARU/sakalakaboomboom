@@ -25,7 +25,6 @@ export const tools: ToolRecord[] = [
     "youtube-video-to-audio",
     "YouTube to MP3 – Video to Audio",
     "Convert YouTube videos up to 4 minutes into downloadable 128 kbps MP3 audio.",
-    "published",
   ),
   tool(
     "pdf-compressor",
@@ -41,7 +40,7 @@ export const tools: ToolRecord[] = [
     "PDF Merger",
     "Combine multiple PDF files in the order you choose.",
     "published",
-    ["image-compressor"],
+    ["image-compressor", "jpg-to-pdf"],
   ),
   tool(
     "pdf-splitter",
@@ -62,7 +61,9 @@ export const tools: ToolRecord[] = [
     "pdf",
     "jpg-to-pdf",
     "JPG to PDF",
-    "Combine JPG images into a PDF.",
+    "Turn JPG and PNG images into one A4 PDF.",
+    "published",
+    ["pdf-merger", "photo-signature-resizer"],
   ),
   tool(
     "pdf-page-extractor",
@@ -78,7 +79,16 @@ export const tools: ToolRecord[] = [
     "Image Compressor",
     "Make JPEG, PNG and WebP images smaller.",
     "published",
-    ["pdf-merger"],
+    ["photo-signature-resizer", "jpg-to-pdf"],
+  ),
+  tool(
+    "photo-signature-resizer",
+    "image",
+    "photo-signature-resizer",
+    "Photo and Signature Resizer",
+    "Resize a photo or signature to the KB and pixel limits of an online form.",
+    "published",
+    ["image-compressor", "jpg-to-pdf"],
   ),
   tool(
     "image-resizer",

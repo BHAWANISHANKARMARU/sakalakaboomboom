@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RelatedTools } from "@/components/tools/related-tools";
+import { ToolGuideDetails } from "@/components/tools/tool-guide";
 import { ToolLayout } from "@/components/tools/tool-layout";
+import { toolGuides } from "@/content/tool-guides";
 import { tools } from "@/content/tools";
 import { EverydayTool } from "@/features/everyday-tools/everyday-tool";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -53,8 +55,8 @@ export async function generateMetadata({
   const item = findTool(category, slug);
   if (!item) return {};
   return buildPageMetadata({
-    title: item.title.en,
-    description: item.description.en,
+    title: toolGuides[item.id].seoTitle,
+    description: toolGuides[item.id].metaDescription,
     path: `/tools/${category}/${slug}`,
   });
 }
@@ -68,7 +70,6 @@ export default async function Page({
   if (!categories.includes(category as (typeof categories)[number])) notFound();
   const item = findTool(category, slug);
   if (!item) notFound();
-  const financial = ["emi-calculator", "sip-calculator"].includes(slug);
   return (
     <ToolLayout
       title={item.title.en}
@@ -81,15 +82,7 @@ export default async function Page({
             : "Web"
       }
       path={`/tools/${category}/${slug}`}
-      details={
-        <p>
-          {financial
-            ? "This calculator provides an estimate only. Actual returns, rates and lender charges may differ. "
-            : ""}
-          Enter your values, review the result, and use Copy result when needed.
-          All processing stays on your device.
-        </p>
-      }
+      details={<ToolGuideDetails toolId={item.id} />}
     >
       <EverydayTool slug={slug} />
       <RelatedTools toolId={item.id} />

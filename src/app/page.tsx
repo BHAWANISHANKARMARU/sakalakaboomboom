@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/page-container";
+import { getLiveTools } from "@/lib/content/registry";
 import { getStaticPageMetadata } from "@/lib/seo/static-pages";
 export const metadata = getStaticPageMetadata("/");
 
@@ -8,22 +9,16 @@ type ToolCard = {
   description: string;
   icon: string;
   tone: string;
-  href?: string;
+  href: string;
 };
 
 const popularTools: ToolCard[] = [
   {
-    title: "YouTube to MP3",
-    description: "Convert video links to 128 kbps MP3 audio",
-    icon: "MP3",
-    tone: "red",
-    href: "/tools/web/youtube-video-to-audio",
-  },
-  {
-    title: "PDF Compressor",
-    description: "Reduce PDF file size while keeping quality",
-    icon: "PDF",
-    tone: "red",
+    title: "Photo and Signature Resizer",
+    description: "Fit images to online form KB limits",
+    icon: "KB",
+    tone: "purple",
+    href: "/tools/image/photo-signature-resizer",
   },
   {
     title: "PDF Merger",
@@ -33,6 +28,13 @@ const popularTools: ToolCard[] = [
     href: "/tools/pdf/pdf-merger",
   },
   {
+    title: "JPG to PDF",
+    description: "Convert JPG and PNG images into a PDF file",
+    icon: "JPG",
+    tone: "red",
+    href: "/tools/pdf/jpg-to-pdf",
+  },
+  {
     title: "Image Compressor",
     description: "Compress JPG, PNG and WebP images",
     icon: "IMG",
@@ -40,16 +42,18 @@ const popularTools: ToolCard[] = [
     href: "/tools/image/image-compressor",
   },
   {
-    title: "Image Resizer",
-    description: "Resize images to exact dimensions",
-    icon: "↗",
-    tone: "purple",
+    title: "Age Calculator",
+    description: "Check your exact age on any date",
+    icon: "AGE",
+    tone: "teal",
+    href: "/tools/calculators/age-calculator",
   },
   {
-    title: "JPG to PDF",
-    description: "Convert JPG images into a PDF file",
-    icon: "JPG",
-    tone: "red",
+    title: "Percentage Calculator",
+    description: "Work out marks and percentages",
+    icon: "%",
+    tone: "teal",
+    href: "/tools/calculators/percentage-calculator",
   },
   {
     title: "Word Counter",
@@ -59,92 +63,50 @@ const popularTools: ToolCard[] = [
     href: "/tools/text/word-counter",
   },
   {
+    title: "GST Calculator",
+    description: "Add or remove GST from an amount",
+    icon: "₹",
+    tone: "teal",
+    href: "/tools/calculators/gst-calculator",
+  },
+  {
     title: "QR Code Generator",
     description: "Create a downloadable QR code instantly",
     icon: "QR",
     tone: "blue",
     href: "/tools/web/qr-code-generator",
   },
-  {
-    title: "JSON Formatter",
-    description: "Format, validate and minify JSON",
-    icon: "{ }",
-    tone: "orange",
-    href: "/tools/web/json-formatter-validator",
-  },
 ];
 
 const categories = [
-  ["PDF Tools", "6 tools", "PDF", "red", "/tools/pdf"],
-  ["Image Tools", "4 tools", "IMG", "purple", "/tools/image"],
-  ["Text Tools", "4 tools", "T", "green", "/tools/text"],
-  ["Developer Tools", "3 tools", "</>", "orange", "/tools/web"],
-  ["Scanner Tools", "2 tools", "⌗", "blue", "/tools/scanner"],
-  ["Calculator Tools", "1 tool", "123", "teal", "/tools/calculators"],
+  ["PDF Tools", "pdf", "PDF", "red"],
+  ["Image Tools", "image", "IMG", "purple"],
+  ["Text Tools", "text", "T", "green"],
+  ["Developer Tools", "web", "</>", "orange"],
+  ["Calculator Tools", "calculators", "123", "teal"],
 ] as const;
+
+const toolCount = (category: string) => {
+  const count = getLiveTools("en").filter(
+    (tool) => tool.category === category,
+  ).length;
+  return `${count} ${count === 1 ? "tool" : "tools"}`;
+};
 
 const education = [
   [
-    "Class 11",
-    "Study guides for Maths, Physics and Chemistry",
-    "11",
+    "Class 9 Maths",
+    "Number System and Polynomials explained simply",
+    "9",
     "blue",
-    "/education/class-11",
+    "/education/class-9/mathematics/mathematics-2026-27",
   ],
   [
-    "Class 12",
-    "Board preparation and subject study guides",
-    "12",
-    "purple",
-    "/education/class-12",
-  ],
-  [
-    "NCERT",
-    "Textbook structure, chapters and study strategies",
-    "N",
+    "कक्षा 9 गणित",
+    "आसान हिंदी में अध्याय गाइड",
+    "हिं",
     "green",
-    "/education/ncert",
-  ],
-  [
-    "CBSE",
-    "Practical preparation and study planning",
-    "C",
-    "orange",
-    "/education/cbse",
-  ],
-  [
-    "Competitive Exams",
-    "Evergreen preparation resources for major exams",
-    "✓",
-    "red",
-    "/exams",
-  ],
-] as const;
-
-const guides = [
-  [
-    "How to reduce PDF file size without losing quality",
-    "A practical guide to choosing sensible compression settings.",
-    "PDF Guide",
-    "red",
-  ],
-  [
-    "How to prepare a clean study timetable",
-    "Build a realistic revision plan around school and practice.",
-    "Study Guide",
-    "blue",
-  ],
-  [
-    "Image file types explained: JPG, PNG and WebP",
-    "Know which image format to use for documents and the web.",
-    "Technology",
-    "purple",
-  ],
-  [
-    "How to check and format JSON safely",
-    "Find syntax errors and make structured data easier to read.",
-    "Developer Guide",
-    "orange",
+    "/hi/education/class-9/mathematics/mathematics-2026-27",
   ],
 ] as const;
 
@@ -155,15 +117,15 @@ const faqs = [
   ],
   [
     "Are my files uploaded to a server?",
-    "The current file tools process files in your browser. A tool will clearly disclose any future server processing before you use it.",
+    "All current tools process your files in your browser. A tool will clearly tell you before any future server processing.",
   ],
   [
     "Can I use these tools on mobile?",
     "Yes. The interface is designed for phones, tablets and desktop computers.",
   ],
   [
-    "How are education and exam details verified?",
-    "Time-sensitive syllabus, policy and exam information is checked against relevant official sources before publication.",
+    "Which image size do online forms accept?",
+    "It differs between exams and years, so check your official notification. You can then enter those limits in the Photo and Signature Resizer.",
   ],
 ] as const;
 
@@ -197,8 +159,8 @@ function IconTile({ label, tone }: { label: string; tone: string }) {
 }
 
 function PopularToolCard({ tool }: { tool: ToolCard }) {
-  const body = (
-    <>
+  return (
+    <Link className="home-tool-card" href={tool.href}>
       <IconTile label={tool.icon} tone={tool.tone} />
       <span className="min-w-0">
         <span className="home-card-title">{tool.title}</span>
@@ -207,15 +169,7 @@ function PopularToolCard({ tool }: { tool: ToolCard }) {
       <span className="home-card-arrow" aria-hidden="true">
         →
       </span>
-      {!tool.href ? <span className="home-soon">Coming soon</span> : null}
-    </>
-  );
-  return tool.href ? (
-    <Link className="home-tool-card" href={tool.href}>
-      {body}
     </Link>
-  ) : (
-    <div className="home-tool-card home-tool-card-planned">{body}</div>
   );
 }
 
@@ -247,10 +201,10 @@ export default function Home() {
           <div className="home-popular-searches" aria-label="Popular searches">
             <strong>Popular:</strong>
             {[
+              "Photo Resizer",
               "PDF Merger",
-              "Image Compressor",
-              "Word Counter",
-              "QR Code Generator",
+              "JPG to PDF",
+              "Age Calculator",
             ].map((label) => (
               <span key={label}>{label}</span>
             ))}
@@ -275,11 +229,15 @@ export default function Home() {
         <section>
           <SectionTitle title="Tools by Category" />
           <div className="home-category-grid">
-            {categories.map(([title, count, icon, tone, href]) => (
-              <Link className="home-category-card" href={href} key={title}>
+            {categories.map(([title, category, icon, tone]) => (
+              <Link
+                className="home-category-card"
+                href={`/tools/${category}`}
+                key={title}
+              >
                 <IconTile label={icon} tone={tone} />
                 <span className="home-card-title">{title}</span>
-                <span className="home-card-copy">{count}</span>
+                <span className="home-card-copy">{toolCount(category)}</span>
                 <span className="home-category-arrow" aria-hidden="true">
                   →
                 </span>
@@ -314,36 +272,6 @@ export default function Home() {
           </div>
         </PageContainer>
       </section>
-
-      <PageContainer className="home-content home-content-lower">
-        <section>
-          <SectionTitle
-            title="Latest Helpful Guides"
-            href="/blog"
-            linkLabel="View All Guides"
-          />
-          <div className="home-guide-grid">
-            {guides.map(([title, copy, category, tone]) => (
-              <article className="home-guide-card" key={title}>
-                <div
-                  className={`home-guide-art home-guide-art-${tone}`}
-                  aria-hidden="true"
-                >
-                  <span>ST</span>
-                </div>
-                <div className="home-guide-body">
-                  <span className="home-guide-label">{category}</span>
-                  <h3>{title}</h3>
-                  <p>{copy}</p>
-                  <span className="home-guide-status">
-                    Editorial roadmap · Publishing after review
-                  </span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      </PageContainer>
 
       <section className="home-trust">
         <PageContainer className="home-trust-grid">

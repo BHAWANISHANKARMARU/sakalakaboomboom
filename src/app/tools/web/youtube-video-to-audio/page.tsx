@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ToolLayout } from "@/components/tools/tool-layout";
 import { YoutubeAudio } from "@/features/youtube-audio/youtube-audio";
+import { getToolBySlug } from "@/lib/content/registry";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
@@ -13,6 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
+  if (!getToolBySlug("web", "youtube-video-to-audio", "en")) notFound();
   return (
     <ToolLayout
       title="YouTube to MP3 – Video to Audio"

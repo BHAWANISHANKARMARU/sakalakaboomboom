@@ -16,6 +16,14 @@ export const websiteJsonLd = () => ({
   },
 });
 
+export const organizationJsonLd = () => ({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: siteConfig.name,
+  url: siteConfig.url,
+  logo: new URL("/icon.png", siteConfig.url).toString(),
+});
+
 export const breadcrumbJsonLd = (items: { name: string; path: string }[]) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -38,4 +46,6 @@ export const toolJsonLd = (
   url: new URL(path, siteConfig.url).toString(),
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Any",
+  isAccessibleForFree: true,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
 });

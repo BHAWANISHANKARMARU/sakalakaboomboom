@@ -7,6 +7,7 @@ type StaticPageRecord = {
   title: string;
   description: string;
   absoluteTitle?: boolean;
+  noIndex?: boolean;
 };
 
 export const staticPages: StaticPageRecord[] = [
@@ -48,6 +49,7 @@ export const staticPages: StaticPageRecord[] = [
   },
   {
     path: "/tools/scanner",
+    noIndex: true,
     title: "Scanner and Utility Tools",
     description:
       "Scan codes and inspect public website information with straightforward tools.",
@@ -66,36 +68,42 @@ export const staticPages: StaticPageRecord[] = [
   },
   {
     path: "/education/ncert",
+    noIndex: true,
     title: "NCERT Study Guides",
     description:
       "Clear guides for using NCERT textbooks and learning chapter concepts effectively.",
   },
   {
     path: "/education/cbse",
+    noIndex: true,
     title: "CBSE Study Resources",
     description:
       "Verified preparation guidance and study resources for CBSE students.",
   },
   {
     path: "/exams",
+    noIndex: true,
     title: "Competitive Exam Guides",
     description:
       "Evergreen preparation guidance with official sources for current exam information.",
   },
   {
     path: "/technology",
+    noIndex: true,
     title: "Technology Guides",
     description:
       "Practical explanations of the internet, devices and digital safety.",
   },
   {
     path: "/how-to",
+    noIndex: true,
     title: "How-to Guides",
     description:
       "Clear instructions for common digital tasks, files, images, text and websites.",
   },
   {
     path: "/blog",
+    noIndex: true,
     title: "Useful Guides",
     description:
       "Original, reviewed guides for students and everyday internet users in India.",
@@ -131,7 +139,9 @@ export const staticPages: StaticPageRecord[] = [
   },
 ];
 
-export const staticPagePaths = staticPages.map((page) => page.path);
+export const staticPagePaths = staticPages
+  .filter((page) => !page.noIndex)
+  .map((page) => page.path);
 
 export function getStaticPageMetadata(path: string): Metadata {
   const page = staticPages.find((item) => item.path === path);

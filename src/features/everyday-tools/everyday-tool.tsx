@@ -24,7 +24,7 @@ export function EverydayTool({ slug }: { slug: string }) {
   const [b, setB] = useState("");
   const [c, setC] = useState("");
   const [text, setText] = useState("");
-  const [mode, setMode] = useState("upper");
+  const [mode, setMode] = useState(slug === "unit-converter" ? "km" : "upper");
   const [generated, setGenerated] = useState("");
 
   const result = useMemo(() => {
@@ -210,6 +210,7 @@ export function EverydayTool({ slug }: { slug: string }) {
           {label("Amount (₹)", a, setA)}
           {label("GST rate (%)", b, setB)}
           <Select
+            name="GST in the amount"
             value={mode}
             set={setMode}
             options={["exclusive", "inclusive"]}
@@ -240,11 +241,13 @@ export function EverydayTool({ slug }: { slug: string }) {
         <>
           {label("Value", a, setA)}
           <Select
+            name="From"
             value={mode}
             set={setMode}
             options={["km", "m", "cm", "mm", "mi", "yd", "ft", "in"]}
           />
           <Select
+            name="To"
             value={b || "m"}
             set={setB}
             options={["km", "m", "cm", "mm", "mi", "yd", "ft", "in"]}
@@ -312,17 +315,19 @@ export function EverydayTool({ slug }: { slug: string }) {
 }
 
 function Select({
+  name = "Option",
   value,
   set,
   options,
 }: {
+  name?: string;
   value: string;
   set: (v: string) => void;
   options: string[];
 }) {
   return (
     <label className="tool-field">
-      Option
+      {name}
       <select value={value} onChange={(e) => set(e.target.value)}>
         {options.map((option) => (
           <option key={option}>{option}</option>
