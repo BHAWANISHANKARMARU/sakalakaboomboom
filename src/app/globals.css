@@ -1273,7 +1273,7 @@ a.directory-card:hover,
   line-height: 1.8;
 }
 .article-page {
-  max-width: 1260px;
+  max-width: 72rem;
 }
 .article-content {
   display: grid;

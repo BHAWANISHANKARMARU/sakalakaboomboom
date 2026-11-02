@@ -1,50 +1,42 @@
 import { render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import Home from "@/app/page";
 import Tools from "@/app/tools/page";
-import YoutubePage, {
-  metadata,
-} from "@/app/tools/web/youtube-video-to-audio/page";
+import YoutubePage from "@/app/tools/web/youtube-video-to-audio/page";
 import sitemap from "@/app/sitemap";
+import { POST } from "@/app/api/youtube-audio/route";
+
+vi.mock("next/navigation", () => ({
+  notFound: () => {
+    throw new Error("NEXT_NOT_FOUND");
+  },
+}));
 
 const path = "/tools/web/youtube-video-to-audio";
-afterEach(() => vi.unstubAllEnvs());
 
-describe("public YouTube audio discovery", () => {
+describe("withdrawn YouTube audio tool", () => {
   it.each([
     ["homepage", Home],
     ["tools directory", Tools],
-  ] as const)("links from the %s", (_, Page) => {
+  ] as const)("is not linked from the %s", (_, Page) => {
     render(<Page />);
     expect(
-      screen.getByRole("link", { name: /YouTube to MP3/ }),
-    ).toHaveAttribute("href", path);
-  });
-
-  it("includes the public page exactly once in the sitemap", () => {
-    expect(
-      sitemap().filter(
-        (item) => item.url === `https://www.sakalakaboomboom.online${path}`,
-      ),
-    ).toHaveLength(1);
-  });
-
-  it("renders the converter form on the indexable production page", () => {
-    vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("VERCEL", "1");
-    render(<YoutubePage />);
-    expect(
-      screen.getByRole("heading", { level: 1, name: /YouTube to MP3/ }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("status", { name: "Online conversion coming soon" }),
+      screen.queryByRole("link", { name: /YouTube to MP3/ }),
     ).not.toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Convert to MP3" }),
-    ).toBeEnabled();
-    expect(metadata.robots).not.toMatchObject({ index: false });
-    expect(metadata.alternates?.canonical).toBe(
-      `https://www.sakalakaboomboom.online${path}`,
+  });
+
+  it("is excluded from the sitemap", () => {
+    expect(sitemap().some((item) => item.url.endsWith(path))).toBe(false);
+  });
+
+  it("returns not found from the page and API", async () => {
+    expect(() => YoutubePage()).toThrow("NEXT_NOT_FOUND");
+    const response = await POST(
+      new Request("http://localhost:3000/api/youtube-audio", {
+        method: "POST",
+        body: "{}",
+      }),
     );
+    expect(response.status).toBe(404);
   });
 });

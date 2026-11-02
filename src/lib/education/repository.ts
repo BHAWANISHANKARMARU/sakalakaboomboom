@@ -183,6 +183,11 @@ export const getEducationSearchRecords = (locale: Locale) =>
     };
   });
 
+export const hasPublishedLessonUnder = (path: string, locale: Locale) =>
+  getEducationSearchRecords(locale).some((lesson) =>
+    lesson.url.startsWith(`${path}/`),
+  );
+
 export const getEducationClassParams = () =>
   educationClasses
     .filter((item) => item.status === "published")
@@ -247,5 +252,12 @@ export const getPublishedEducationSitemapRecords = () => {
     for (const lesson of getEducationSearchRecords(locale))
       records.push({ path: lesson.url, lastModified: lesson.updatedAt });
   }
-  return records;
+  return records.filter(
+    ({ path }) =>
+      path === "/hi/education" ||
+      hasPublishedLessonUnder(path, path.startsWith("/hi/") ? "hi" : "en") ||
+      getEducationSearchRecords(path.startsWith("/hi/") ? "hi" : "en").some(
+        (lesson) => lesson.url === path,
+      ),
+  );
 };

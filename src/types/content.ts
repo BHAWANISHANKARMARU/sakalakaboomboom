@@ -23,6 +23,9 @@ export type ArticleRecord = {
   status: PublicationStatus;
   relatedToolIds: string[];
   relatedArticleIds: string[];
+  updatedAt: string;
+  toolLinks?: { href: string; label: string }[];
+  sections: { heading: string; paragraphs?: string[]; steps?: string[] }[];
 };
 export type CategoryRecord = {
   id: ToolCategory;

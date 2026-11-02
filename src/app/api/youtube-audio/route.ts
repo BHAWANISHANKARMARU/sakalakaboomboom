@@ -7,6 +7,7 @@ import { randomUUID } from "node:crypto";
 import { AudioError, convertAudio } from "@/features/youtube-audio/server";
 import { normalizeYoutubeUrl } from "@/features/youtube-audio/validate";
 import { siteConfig } from "@/config/site";
+import { getToolBySlug } from "@/lib/content/registry";
 
 export const runtime = "nodejs";
 export const maxDuration = 240;
@@ -19,6 +20,8 @@ function failure(error: string, status: number, requestId?: string) {
 }
 
 export async function POST(request: Request) {
+  if (!getToolBySlug("web", "youtube-video-to-audio", "en"))
+    return failure("Not found.", 404);
   // Next may normalize request.url to localhost even for a 127.0.0.1 request.
   const normalized = new URL(request.url);
   let url: URL;

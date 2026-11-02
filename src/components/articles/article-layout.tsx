@@ -22,7 +22,7 @@ export function ArticleLayout({
           eyebrow={category}
           breadcrumbs={[
             { label: "Home", href: "/" },
-            { label: category, href: "/blog" },
+            { label: category, href: "/how-to" },
             { label: title },
           ]}
         />

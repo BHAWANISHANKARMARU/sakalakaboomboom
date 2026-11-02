@@ -7,37 +7,20 @@ const desktopMenus = [
     label: "Tools",
     links: [
       ["All Tools", "/tools"],
+      ["Form Ready Kit", "/tools/image/form-ready-kit"],
       ["PDF Tools", "/tools/pdf"],
       ["Image Tools", "/tools/image"],
       ["Text Tools", "/tools/text"],
+      ["Calculators", "/tools/calculators"],
       ["Developer Tools", "/tools/web"],
-      ["Scanner Tools", "/tools/scanner"],
     ],
   },
   {
     label: "Education",
     links: [
       ["Education Home", "/education"],
-      ["Class 11", "/education/class-11"],
-      ["Class 12", "/education/class-12"],
-      ["NCERT", "/education/ncert"],
-      ["CBSE", "/education/cbse"],
-    ],
-  },
-  {
-    label: "Exams",
-    links: [
-      ["Competitive Exams", "/exams"],
-      ["Exam Study Guides", "/education"],
-      ["Useful Tools", "/tools"],
-    ],
-  },
-  {
-    label: "Technology",
-    links: [
-      ["Technology Guides", "/technology"],
-      ["Developer Tools", "/tools/web"],
-      ["How-to Guides", "/how-to"],
+      ["Class 9 Maths", "/education/class-9/mathematics/mathematics-2026-27"],
+      ["हिंदी पाठ", "/hi/education"],
     ],
   },
 ] as const;
@@ -76,8 +59,8 @@ export function Header() {
               </div>
             </details>
           ))}
-          <Link className="site-nav-link" href="/blog">
-            Blog
+          <Link className="site-nav-link" href="/how-to">
+            Guides
           </Link>
         </nav>
         <form action="/search" className="site-header-search">

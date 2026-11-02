@@ -39,6 +39,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## YouTube-to-MP3 tool
 
+**Withdrawn from the public site.** The tool is `planned` in `src/content/tools.ts`, so its page and API return 404 and it is left out of navigation, search and the sitemap. Setting it back to `published` restores it. The notes below describe how it works when enabled.
+
 Conversion runs in the existing Next.js Node Route Handler at `/api/youtube-audio`.
 No separate backend, email token or paid conversion API is required.
 

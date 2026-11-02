@@ -4,7 +4,7 @@ import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { siteConfig } from "@/config/site";
-import { websiteJsonLd } from "@/lib/seo/structured-data";
+import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: siteConfig.homeTitle,
     description: siteConfig.description,
   },
@@ -34,7 +34,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(websiteJsonLd()).replace(/</g, "\\u003c"),
+            __html: JSON.stringify([
+              websiteJsonLd(),
+              organizationJsonLd(),
+            ]).replace(/</g, "\\u003c"),
           }}
         />
         <Header />

@@ -34,8 +34,14 @@ export function buildPageMetadata({
       url: canonical,
       siteName: siteConfig.name,
       type: "website",
+      images: ["/opengraph-image"],
     },
-    twitter: { card: "summary", title, description },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/opengraph-image"],
+    },
     robots: noIndex ? { index: false, follow: true } : undefined,
   };
 }

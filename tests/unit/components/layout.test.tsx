@@ -27,8 +27,11 @@ describe("site shell", () => {
       screen.getAllByRole("link", { name: "PDF Tools" })[0],
     ).toHaveAttribute("href", "/tools/pdf");
     expect(
-      screen.getAllByRole("link", { name: "Class 12" })[0],
-    ).toHaveAttribute("href", "/education/class-12");
+      screen.getAllByRole("link", { name: "Class 9 Maths" })[0],
+    ).toHaveAttribute(
+      "href",
+      "/education/class-9/mathematics/mathematics-2026-27",
+    );
   });
 
   it("does not render an empty ad when advertising is disabled", () => {
