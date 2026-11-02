@@ -73,7 +73,7 @@ export const toolGuides: Record<string, ToolGuide> = {
       "Move the quality slider. Lower quality gives a smaller file.",
       "Select Compress image, check the new size and download it.",
     ],
-    note: "PNG images are saved as WebP because that format is usually much smaller. Need a specific size such as 50 KB for a form? Use the Photo and Signature Resizer.",
+    note: "PNG images are saved as WebP because that format is usually much smaller. Need a specific size such as 50 KB for a form? Use the Photo Resizer in KB.",
     faqs: [
       {
         question: "What quality should I choose?",
@@ -117,6 +117,32 @@ export const toolGuides: Record<string, ToolGuide> = {
       {
         question: "Is it available in Hindi?",
         answer: "Yes. Use the Hindi link on this page.",
+      },
+    ],
+  },
+  "pdf-compressor": {
+    seoTitle: "PDF Size Reducer in KB – Free, No Upload",
+    metaDescription:
+      "Reduce a PDF to the KB size you need, such as 100 KB or 200 KB. Free, works in your browser, with no sign up and no upload.",
+    steps: [
+      "Choose a PDF up to 25 MB.",
+      "Enter the target size in KB from your form.",
+      "Select Reduce PDF size, check the result, then download it.",
+    ],
+    note: "To save space, pages are turned into images. Text in the new file cannot be selected, so keep your original PDF.",
+    faqs: [
+      {
+        question: "Is my PDF uploaded?",
+        answer: "No. It is processed in your browser, on your device.",
+      },
+      {
+        question: "Why can’t my PDF reach my target?",
+        answer:
+          "Each page needs some space, so long documents may not fit. You get the smallest version the tool can make. Remove pages with the PDF Page Extractor, or use a higher target.",
+      },
+      {
+        question: "Can it open password-protected PDFs?",
+        answer: "No. Remove the password in a PDF reader you trust first.",
       },
     ],
   },
@@ -204,7 +230,7 @@ export const toolGuides: Record<string, ToolGuide> = {
     ],
   },
   "photo-signature-resizer": {
-    seoTitle: "Resize Photo and Signature to KB for Online Forms",
+    seoTitle: "Photo Resizer in KB – Photo and Signature",
     metaDescription:
       "Resize a photo or signature to the KB limit and pixel size your online form asks for. Set your own limits. Free, in your browser, with no upload.",
     steps: [
@@ -517,7 +543,7 @@ export const toolGuides: Record<string, ToolGuide> = {
     ],
   },
   "age-calculator": {
-    seoTitle: "Age Calculator – Age in Years, Months and Days",
+    seoTitle: "Age Calculator as on Date – Years, Months, Days",
     metaDescription:
       "Calculate your exact age in years, months and days on any date. Useful for checking age limits on exam and job forms. Free.",
     steps: [
@@ -608,9 +634,9 @@ export const toolGuides: Record<string, ToolGuide> = {
     ],
   },
   "gst-calculator": {
-    seoTitle: "GST Calculator India – Add or Remove GST",
+    seoTitle: "GST Calculator with CGST and SGST",
     metaDescription:
-      "Add GST to a price or find the GST inside a price at any rate. Shows the tax and total in rupees. Free for shops and students.",
+      "Add or remove GST at any rate and see the CGST and SGST split in rupees. Free GST calculator for India.",
     steps: [
       "Enter the amount and the GST rate.",
       "Choose exclusive if GST is not in the amount, or inclusive if it is.",
@@ -626,9 +652,9 @@ export const toolGuides: Record<string, ToolGuide> = {
           "Choose inclusive. The formula is GST = amount − amount ÷ (1 + rate ÷ 100).",
       },
       {
-        question: "Does this split CGST and SGST?",
+        question: "How is GST split into CGST and SGST?",
         answer:
-          "No, it shows total GST. For a sale within one state, this total is normally divided equally between CGST and SGST.",
+          "For a sale within one state, total GST is normally divided equally. So ₹180 GST becomes ₹90 CGST and ₹90 SGST. A sale between states normally uses IGST instead.",
       },
     ],
   },

@@ -3,6 +3,11 @@ import { tools } from "@/content/tools";
 import { toolGuides } from "@/content/tool-guides";
 import { targetSize } from "@/features/image-converter/convert";
 import { parsePageRanges } from "@/features/pdf-pages/extract";
+import { sizePages } from "@/content/size-pages";
+import {
+  COMPRESSION_STEPS,
+  pickSmallestFit,
+} from "@/features/pdf-compressor/compress";
 import { fitOnPage, imagesToPdf } from "@/features/jpg-to-pdf/convert";
 import { centreCrop, findBestQuality } from "@/features/photo-resizer/resize";
 import {
@@ -42,6 +47,44 @@ describe("JPG to PDF", () => {
   it("rejects a file that is not really an image", async () => {
     const file = new File(["not an image"], "a.jpg", { type: "image/jpeg" });
     await expect(imagesToPdf([file])).rejects.toThrow("not a JPG or PNG");
+  });
+});
+
+describe("PDF size steps", () => {
+  it("stops at the first step that fits", async () => {
+    const built: number[] = [];
+    const { result, fits } = await pickSmallestFit(
+      COMPRESSION_STEPS,
+      async (step) => {
+        built.push(step.scale);
+        return { length: Math.round(step.scale * 100) };
+      },
+      95,
+    );
+    expect(fits).toBe(true);
+    expect(result.length).toBe(90);
+    expect(built).toHaveLength(4);
+  });
+  it("returns the smallest version when nothing fits", async () => {
+    const { result, fits } = await pickSmallestFit(
+      COMPRESSION_STEPS,
+      async (step) => ({ length: Math.round(step.scale * 100) }),
+      10,
+    );
+    expect(fits).toBe(false);
+    expect(result.length).toBe(60);
+  });
+});
+
+describe("size pages", () => {
+  it("has unique titles and search descriptions within limits", () => {
+    expect(new Set(sizePages.map((page) => page.seoTitle)).size).toBe(
+      sizePages.length,
+    );
+    for (const page of sizePages) {
+      expect(page.seoTitle.length, page.seoTitle).toBeLessThanOrEqual(52);
+      expect(page.metaDescription.length).toBeLessThanOrEqual(160);
+    }
   });
 });
 

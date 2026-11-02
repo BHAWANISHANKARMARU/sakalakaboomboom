@@ -6,8 +6,8 @@ const groups = [
     title: "Tools",
     links: [
       ["Form Ready Kit", "/tools/image/form-ready-kit"],
-      ["PDF Tools", "/tools/pdf"],
-      ["Image Tools", "/tools/image"],
+      ["Photo Resizer in KB", "/tools/image/photo-resizer-in-kb"],
+      ["PDF Size Reducer", "/tools/pdf/pdf-size-reducer"],
       ["Calculators", "/tools/calculators"],
       ["All Tools", "/tools"],
     ],
@@ -16,7 +16,7 @@ const groups = [
     title: "Learn",
     links: [
       ["Class 9 Maths", "/education/class-9/mathematics/mathematics-2026-27"],
-      ["हिंदी में पढ़ें", "/hi/education"],
+      ["हिंदी पाठ", "/hi/education"],
       ["How-to Guides", "/how-to"],
     ],
   },

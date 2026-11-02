@@ -19,33 +19,33 @@ export const staticPages: StaticPageRecord[] = [
   },
   {
     path: "/tools",
-    title: "Online Tools",
+    title: "Free Online Tools for Photos, PDFs and Forms",
     description:
-      "Fast, private online utilities for PDFs, images, text, calculations and web tasks.",
+      "Free online tools for photos, PDFs, text and calculations. They work in your browser, need no sign up and keep your files on your device.",
   },
   {
     path: "/tools/pdf",
-    title: "PDF Tools",
+    title: "Free PDF Tools – Reduce, Merge and Convert",
     description:
-      "Work with PDF files privately using practical browser-based tools.",
+      "Reduce PDF size in KB, merge PDFs, turn photos into a PDF and extract pages. Free PDF tools that work in your browser with no upload.",
   },
   {
     path: "/tools/image",
-    title: "Image Tools",
+    title: "Free Image Tools – Resize Photos in KB",
     description:
-      "Compress, resize and convert everyday images in your browser.",
+      "Resize photos in KB, compress images and convert JPG and PNG files. Free image tools for online forms that work with no upload.",
   },
   {
     path: "/tools/text",
-    title: "Text Tools",
+    title: "Free Text Tools – Count, Clean and Convert",
     description:
-      "Count, clean and transform text instantly with free browser tools.",
+      "Count words, change text case, sort lines, remove duplicates and clean extra spaces. Free text tools that work in your browser.",
   },
   {
     path: "/tools/web",
-    title: "Web and Developer Tools",
+    title: "Free Web and Developer Tools Online",
     description:
-      "Practical utilities for JSON, URLs, QR codes and common developer tasks.",
+      "Format JSON, create QR codes, generate passwords and encode URLs or Base64. Free developer tools that keep your data on your device.",
   },
   {
     path: "/tools/scanner",
@@ -56,15 +56,15 @@ export const staticPages: StaticPageRecord[] = [
   },
   {
     path: "/tools/calculators",
-    title: "Everyday Calculators",
+    title: "Free Calculators – GST, EMI, SIP and Age",
     description:
-      "Useful calculators for percentages, GST, EMI, dates and everyday decisions.",
+      "Free calculators for India, including GST with CGST and SGST, EMI, SIP, age, percentage and discount. Fast, simple and mobile friendly.",
   },
   {
     path: "/education",
     title: "Class 9 to 12 Study Resources",
     description:
-      "Verified Class 9 to 12 subject directories and original chapter guides for Indian students.",
+      "Original chapter guides for Indian students in English and Hindi, with verified subject lists for Class 9 to 12 and simple examples.",
   },
   {
     path: "/education/ncert",
@@ -96,9 +96,9 @@ export const staticPages: StaticPageRecord[] = [
   },
   {
     path: "/how-to",
-    title: "How-to Guides",
+    title: "How-to Guides for Online Forms and Documents",
     description:
-      "Clear instructions for common digital tasks, files, images, text and websites.",
+      "Simple step-by-step guides for resizing photos, preparing PDFs for online forms, checking age limits and handling everyday documents.",
   },
   {
     path: "/blog",
@@ -109,32 +109,33 @@ export const staticPages: StaticPageRecord[] = [
   },
   {
     path: "/about",
-    title: "About Sakalakaboomboom",
+    title: "About Us",
     description:
-      "Learn about Sakalakaboomboom's practical tools and reviewed learning resources.",
+      "Learn about Sakalakaboomboom, a free set of private browser tools and reviewed study resources made for students and users in India.",
   },
   {
     path: "/contact",
-    title: "Contact",
+    title: "Contact Us",
     description:
-      "Report a tool problem, content correction or accessibility issue.",
+      "Report a tool problem, suggest a correction or raise an accessibility issue with Sakalakaboomboom. We review every useful report.",
   },
   {
     path: "/privacy-policy",
     title: "Privacy Policy",
     description:
-      "How Sakalakaboomboom handles information, browser processing and analytics.",
+      "Read how Sakalakaboomboom handles information, how browser tools keep your files on your device, and how analytics are used on this site.",
   },
   {
     path: "/terms",
     title: "Terms of Use",
-    description: "Plain-language conditions for using Sakalakaboomboom.",
+    description:
+      "Read the plain-language terms for using Sakalakaboomboom, including fair use of our free tools and the limits of our informational content.",
   },
   {
     path: "/disclaimer",
     title: "Disclaimer",
     description:
-      "Important limits on Sakalakaboomboom tools and informational guides.",
+      "Understand the limits of Sakalakaboomboom tools and guides, and why you should always check official sources for exam and financial details.",
   },
 ];
 

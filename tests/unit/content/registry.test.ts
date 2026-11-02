@@ -19,8 +19,8 @@ describe("content registry", () => {
   });
 
   it("publishes the foundation and everyday tools but not YouTube audio", () => {
-    expect(getLiveTools("en")).toHaveLength(32);
-    expect(getToolBySlug("pdf", "pdf-compressor", "en")).toBeUndefined();
+    expect(getLiveTools("en")).toHaveLength(33);
+    expect(getToolBySlug("pdf", "pdf-splitter", "en")).toBeUndefined();
     expect(getToolBySlug("pdf", "pdf-merger", "hi")?.title).toBe("PDF Merger");
   });
 

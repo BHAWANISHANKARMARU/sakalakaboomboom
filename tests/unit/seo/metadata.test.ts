@@ -32,8 +32,7 @@ describe("metadata", () => {
       siteName: "Sakalakaboomboom",
     });
     expect(metadata.title).toEqual({
-      absolute:
-        "Sakalakaboomboom — Free Online Tools & Study Resources for India",
+      absolute: "Sakalakaboomboom — Free Photo, PDF & Form Tools for India",
     });
   });
 

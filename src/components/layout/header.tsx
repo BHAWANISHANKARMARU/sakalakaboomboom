@@ -20,7 +20,7 @@ const desktopMenus = [
     links: [
       ["Education Home", "/education"],
       ["Class 9 Maths", "/education/class-9/mathematics/mathematics-2026-27"],
-      ["हिंदी में पढ़ें", "/hi/education"],
+      ["हिंदी पाठ", "/hi/education"],
     ],
   },
 ] as const;

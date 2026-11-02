@@ -1,10 +1,12 @@
 import type { ArticleRecord } from "@/types/content";
 
 const article = (
-  record: Omit<ArticleRecord, "locale" | "section" | "status" | "updatedAt">,
+  record: Omit<ArticleRecord, "locale" | "section" | "status" | "updatedAt"> & {
+    locale?: ArticleRecord["locale"];
+  },
 ): ArticleRecord => ({
-  ...record,
   locale: "en",
+  ...record,
   section: "how-to",
   status: "published",
   updatedAt: "2026-10-31",
@@ -69,7 +71,7 @@ export const articles: ArticleRecord[] = [
       {
         heading: "The quick method",
         steps: [
-          "Open the Photo and Signature Resizer.",
+          "Open the Photo Resizer in KB.",
           "Set the maximum size to 50 KB.",
           "Enter the pixel size your form asks for. If it gives none, try a modest size such as 400 × 400.",
           "Select Resize image. The tool finds the highest quality that stays within your limit.",
@@ -186,6 +188,100 @@ export const articles: ArticleRecord[] = [
         heading: "Age relaxation",
         paragraphs: [
           "Some candidates may get extra years under the notification’s rules. These rules differ between exams, so read that section carefully and rely only on the official text.",
+        ],
+      },
+    ],
+  }),
+  article({
+    id: "pratishat-kaise-nikale",
+    locale: "hi",
+    slug: "pratishat-kaise-nikale",
+    title: "प्रतिशत कैसे निकालें – आसान फ़ॉर्मूला और उदाहरण",
+    description:
+      "प्रतिशत निकालने का आसान फ़ॉर्मूला सीखें और उदाहरणों से समझें कि अंकों, छूट और बढ़ोतरी का प्रतिशत कैसे निकालते हैं।",
+    relatedToolIds: ["percentage-calculator"],
+    relatedArticleIds: [],
+    toolLinks: [
+      {
+        href: "/tools/calculators/percentage-calculator",
+        label: "प्रतिशत कैलकुलेटर",
+      },
+      { href: "/hi/tools/age-calculator", label: "आयु कैलकुलेटर" },
+    ],
+    sections: [
+      {
+        heading: "प्रतिशत का फ़ॉर्मूला",
+        paragraphs: [
+          "प्रतिशत = (प्राप्त संख्या ÷ कुल संख्या) × 100। प्रतिशत का अर्थ है “हर 100 में से कितना”।",
+        ],
+      },
+      {
+        heading: "अंकों का प्रतिशत कैसे निकालें",
+        paragraphs: [
+          "मान लीजिए आपको 500 में से 450 अंक मिले। 450 ÷ 500 = 0.9 और 0.9 × 100 = 90। यानी आपके 90% अंक हैं।",
+          "कई विषयों का कुल प्रतिशत निकालने के लिए सभी विषयों के प्राप्त अंक जोड़ें, फिर सभी के अधिकतम अंक जोड़ें और यही फ़ॉर्मूला लगाएँ।",
+        ],
+      },
+      {
+        heading: "किसी संख्या का प्रतिशत कैसे निकालें",
+        paragraphs: [
+          "संख्या को प्रतिशत से गुणा करें और 100 से भाग दें। उदाहरण: 200 का 15% = 200 × 15 ÷ 100 = 30।",
+        ],
+      },
+      {
+        heading: "बढ़ोतरी या कमी का प्रतिशत",
+        paragraphs: [
+          "बदलाव ÷ पुरानी संख्या × 100। उदाहरण: दाम 400 से बढ़कर 500 रुपये हुआ। बदलाव 100 है, इसलिए 100 ÷ 400 × 100 = 25% बढ़ोतरी।",
+        ],
+      },
+      {
+        heading: "आम गलती",
+        paragraphs: [
+          "बढ़ोतरी निकालते समय नई संख्या से नहीं, बल्कि पुरानी संख्या से भाग दें।",
+        ],
+      },
+    ],
+  }),
+  article({
+    id: "photo-ka-size-kaise-kam-kare",
+    locale: "hi",
+    slug: "photo-ka-size-kaise-kam-kare",
+    title: "फोटो का साइज़ KB में कैसे कम करें",
+    description:
+      "मोबाइल की फोटो को ऑनलाइन फ़ॉर्म के लिए 20 KB, 50 KB या 100 KB तक छोटा करने का आसान तरीका।",
+    relatedToolIds: ["photo-signature-resizer", "form-ready-kit"],
+    relatedArticleIds: [],
+    toolLinks: [
+      { href: "/hi/tools/form-ready-kit", label: "फ़ॉर्म रेडी किट" },
+      { href: "/tools/image/photo-resizer-50kb", label: "Photo Resizer 50 KB" },
+      { href: "/tools/image/photo-resizer-20kb", label: "Photo Resizer 20 KB" },
+    ],
+    sections: [
+      {
+        heading: "KB और पिक्सेल में क्या अंतर है",
+        paragraphs: [
+          "पिक्सेल फोटो की चौड़ाई और ऊँचाई बताते हैं। KB बताता है कि फ़ाइल कितनी जगह लेती है। ऑनलाइन फ़ॉर्म इन दोनों की जाँच कर सकता है।",
+        ],
+      },
+      {
+        heading: "फोटो का साइज़ कम करने के स्टेप",
+        steps: [
+          "अधिसूचना में फोटो की KB और पिक्सेल सीमा देखें।",
+          "फ़ॉर्म रेडी किट खोलें और अपनी फोटो चुनें।",
+          "वही सीमाएँ भरें और “मेरी फ़ाइलें तैयार करें” चुनें।",
+          "फोटो खोलकर देखें कि वह साफ़ दिख रही है, फिर डाउनलोड करें।",
+        ],
+      },
+      {
+        heading: "फोटो धुंधली दिखे तो क्या करें",
+        paragraphs: [
+          "सादे बैकग्राउंड और अच्छी रोशनी में फोटो लें और चेहरे के पास तक क्रॉप करें। इससे कम KB में भी फोटो ज़्यादा साफ़ रहती है।",
+        ],
+      },
+      {
+        heading: "क्या फोटो अपलोड होती है?",
+        paragraphs: [
+          "नहीं। हमारे टूल आपके ब्राउज़र में काम करते हैं, इसलिए आपकी फोटो आपके डिवाइस पर ही रहती है।",
         ],
       },
     ],

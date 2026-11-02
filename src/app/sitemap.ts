@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
+import { sizePagePath, sizePages } from "@/content/size-pages";
 import { getLiveTools, getPublishedArticles } from "@/lib/content/registry";
 import { getPublishedEducationSitemapRecords } from "@/lib/education/repository";
 import { staticPagePaths } from "@/lib/seo/static-pages";
@@ -7,6 +8,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const basicRoutes = [
     ...staticPagePaths,
     "/hi/tools/form-ready-kit",
+    "/hi/tools/age-calculator",
+    ...sizePages.map(sizePagePath),
+    ...getPublishedArticles("hi").map((item) => `/hi/how-to/${item.slug}`),
     ...getLiveTools("en").map((item) => item.url),
     ...getPublishedArticles("en").map(
       (item) => `/${item.section}/${item.slug}`,

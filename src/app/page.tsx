@@ -21,11 +21,11 @@ const popularTools: ToolCard[] = [
     href: "/tools/image/form-ready-kit",
   },
   {
-    title: "Photo and Signature Resizer",
+    title: "Photo Resizer in KB",
     description: "Fit images to online form KB limits",
     icon: "KB",
     tone: "purple",
-    href: "/tools/image/photo-signature-resizer",
+    href: "/tools/image/photo-resizer-in-kb",
   },
   {
     title: "PDF Merger",
@@ -33,6 +33,13 @@ const popularTools: ToolCard[] = [
     icon: "PDF",
     tone: "red",
     href: "/tools/pdf/pdf-merger",
+  },
+  {
+    title: "PDF Size Reducer",
+    description: "Reduce a PDF to the KB size you need",
+    icon: "KB",
+    tone: "red",
+    href: "/tools/pdf/pdf-size-reducer",
   },
   {
     title: "JPG to PDF",
@@ -61,13 +68,6 @@ const popularTools: ToolCard[] = [
     icon: "%",
     tone: "teal",
     href: "/tools/calculators/percentage-calculator",
-  },
-  {
-    title: "Word Counter",
-    description: "Count words, characters and reading time",
-    icon: "T",
-    tone: "green",
-    href: "/tools/text/word-counter",
   },
   {
     title: "GST Calculator",
@@ -214,9 +214,9 @@ export default function Home() {
             <strong>Popular:</strong>
             {[
               "Form Ready Kit",
-              "PDF Merger",
+              "Photo Resizer",
+              "PDF Size Reducer",
               "JPG to PDF",
-              "Age Calculator",
             ].map((label) => (
               <span key={label}>{label}</span>
             ))}

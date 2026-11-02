@@ -56,8 +56,9 @@ export const getSubjectMetadata = (
   const subject = getSubjectDirectory(classSlug, subjectSlug, locale);
   if (!subject) return {};
   const path = `/education/${classSlug}/${subjectSlug}`;
+  const classTitle = getClassDirectory(classSlug, locale)?.title;
   return buildPageMetadata({
-    title: `${subject.title} Chapters and Study Guides`,
+    title: `${classTitle} ${subject.title} Chapters and Study Guides`,
     description: subject.description,
     path: `${prefix(locale)}${path}`,
     noIndex: !hasPublishedLessonUnder(`${prefix(locale)}${path}`, locale),
@@ -74,8 +75,9 @@ export const getBookMetadata = (
   const book = getBookDirectory(classSlug, subjectSlug, bookSlug, locale);
   if (!book) return {};
   const path = `/education/${classSlug}/${subjectSlug}/${bookSlug}`;
+  const classTitle = getClassDirectory(classSlug, locale)?.title;
   return buildPageMetadata({
-    title: `${book.title} Chapters`,
+    title: `${classTitle} ${book.title} Chapters`,
     description: book.description,
     path: `${prefix(locale)}${path}`,
     noIndex: !hasPublishedLessonUnder(`${prefix(locale)}${path}`, locale),

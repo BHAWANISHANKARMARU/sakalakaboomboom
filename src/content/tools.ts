@@ -29,9 +29,11 @@ export const tools: ToolRecord[] = [
   tool(
     "pdf-compressor",
     "pdf",
-    "pdf-compressor",
-    "PDF Compressor",
-    "Reduce PDF file size while keeping documents readable.",
+    "pdf-size-reducer",
+    "PDF Size Reducer in KB",
+    "Reduce a PDF to the KB size you need, without uploading it.",
+    "published",
+    ["pdf-merger", "pdf-page-extractor", "form-ready-kit"],
   ),
   tool(
     "pdf-merger",
@@ -95,8 +97,8 @@ export const tools: ToolRecord[] = [
   tool(
     "photo-signature-resizer",
     "image",
-    "photo-signature-resizer",
-    "Photo and Signature Resizer",
+    "photo-resizer-in-kb",
+    "Photo Resizer in KB",
     "Resize a photo or signature to the KB and pixel limits of an online form.",
     "published",
     ["image-compressor", "jpg-to-pdf"],

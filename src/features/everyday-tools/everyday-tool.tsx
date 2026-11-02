@@ -63,7 +63,7 @@ export function EverydayTool({ slug }: { slug: string }) {
     if (slug === "gst-calculator") {
       const value = calculateGst(n(a), n(b), mode === "inclusive");
       return value
-        ? `GST ${money(value.tax)} · Total ${money(value.total)}`
+        ? `GST ${money(value.tax)} (CGST ${money(value.tax / 2)} + SGST ${money(value.tax / 2)}) · Total ${money(value.total)}`
         : "Enter a valid amount and GST rate.";
     }
     if (slug === "emi-calculator") {

@@ -57,6 +57,49 @@ export function centreCrop(
   };
 }
 
+export type TargetImage = { blob: Blob; width: number; height: number };
+
+// Shrinks the pixel size step by step until the photo fits the KB target.
+export async function compressToKb(
+  file: File,
+  maxKb: number,
+): Promise<TargetImage> {
+  const valid = await validateImageFile(file);
+  if (!valid.ok) throw new Error(valid.message);
+  const bitmap = await createImageBitmap(file);
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Canvas unavailable");
+  const encode = (quality: number) =>
+    new Promise<Blob>((resolve, reject) =>
+      canvas.toBlob(
+        (value) =>
+          value ? resolve(value) : reject(new Error("Image encoding failed")),
+        "image/jpeg",
+        quality,
+      ),
+    );
+  const longest = Math.max(bitmap.width, bitmap.height);
+  let scale = Math.min(1, 1600 / longest);
+  for (let attempt = 0; attempt < 14; attempt++) {
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    // Quality below 0.5 looks rough, so reduce pixels before going lower.
+    const blob = await encode(0.5);
+    if (blob.size <= maxKb * 1024) {
+      const best = await findBestQuality(encode, maxKb * 1024);
+      bitmap.close();
+      return { blob: best ?? blob, width: canvas.width, height: canvas.height };
+    }
+    scale *= 0.8;
+  }
+  bitmap.close();
+  throw new Error("This image cannot reach that size. Try a higher KB target.");
+}
+
 export async function resizeToLimits(
   file: File,
   limits: { minKb: number; maxKb: number; width: number; height: number },

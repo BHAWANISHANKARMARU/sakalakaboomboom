@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: "Sakalakaboomboom",
-  homeTitle: "Sakalakaboomboom — Free Online Tools & Study Resources for India",
+  homeTitle: "Sakalakaboomboom — Free Photo, PDF & Form Tools for India",
   description:
     "Free, fast online tools for PDFs, images, text and everyday tasks, plus carefully reviewed study resources for students across India.",
   url:
